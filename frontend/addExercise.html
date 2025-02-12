@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dodaj ćwiczenie</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/addExercise.css">
 </head>
 <body>
   <h1>Dodaj nowe ćwiczenie</h1>
   
-  <form id="exercise-form">
+  <form id="exercise-form" enctype="multipart/form-data">
     <label for="name">Nazwa ćwiczenia:</label>
     <input type="text" id="name" name="name" required>
     
@@ -28,6 +28,6 @@
     <button type="submit">Dodaj ćwiczenie</button>
   </form>
 
-  <script src="js/App.js"></script>
+  <script src="js/addExercise.js"></script>  <!-- Skrypt JavaScript do obsługi formularza -->
 </body>
 </html>
