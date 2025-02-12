@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dodaj ćwiczenie</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>Dodaj nowe ćwiczenie</h1>
+  
+  <form id="exercise-form">
+    <label for="name">Nazwa ćwiczenia:</label>
+    <input type="text" id="name" name="name" required>
+    
+    <label for="muscle-group">Partia mięśniowa:</label>
+    <input type="text" id="muscle-group" name="muscle-group" required>
+    
+    <label for="current-weight">Aktualny ciężar:</label>
+    <input type="number" id="current-weight" name="current-weight" required>
+
+    <label for="max-weight">Maksymalny ciężar:</label>
+    <input type="number" id="max-weight" name="max-weight" required>
+    
+    <label for="images">Zdjęcia (maksymalnie 2):</label>
+    <input type="file" id="images" name="images" multiple>
+    
+    <button type="submit">Dodaj ćwiczenie</button>
+  </form>
+
+  <script src="js/App.js"></script>
+</body>
+</html>

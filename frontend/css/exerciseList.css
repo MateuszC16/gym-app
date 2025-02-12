@@ -1,0 +1,21 @@
+/* exerciseList.css */
+
+table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+  }
+  
+  img {
+    max-width: 50px;
+  }
+  
