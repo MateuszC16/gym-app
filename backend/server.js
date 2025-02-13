@@ -53,7 +53,7 @@ client.connect()
   });
 
 
-  
+
   app.post('/api/exercises', upload.array('images', 2), async (req, res) => {
     const { name, muscleGroup, currentWeight, maxWeight, userId } = req.body;
     const images = req.files;  // Pliki przesyłane przez multer
@@ -95,6 +95,61 @@ app.get('/api/exercises', async (req, res) => {
     res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczeń z bazy danych' });
   }
 });
+
+// Metoda do edytowania ćwiczeń (PUT)
+app.put('/api/exercises/:id', upload.array('images', 2), async (req, res) => {
+  const { id } = req.params;  // ID ćwiczenia z parametru URL
+  const { name, muscleGroup, currentWeight, maxWeight, userId } = req.body;
+  const images = req.files;  // Pliki przesyłane przez multer
+
+  // Logowanie danych przychodzących
+  console.log('Received update data:', req.body);  // Sprawdzamy dane ćwiczenia
+  console.log('Received files:', images);  // Sprawdzamy przesłane zdjęcia
+
+  // Przypisujemy ścieżki do zdjęć (jeśli istnieją)
+  const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
+  const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
+
+  console.log('imageOnePath:', imageOnePath);
+  console.log('imageTwoPath:', imageTwoPath);
+
+  try {
+    // Zapytanie SQL do edytowania ćwiczenia
+    const result = await client.query(
+      'UPDATE exercises SET name = $1, muscle_group = $2, current_weight = $3, max_weight = $4, image_one = $5, image_two = $6, user_id = $7 WHERE id = $8 RETURNING *',
+      [name, muscleGroup, currentWeight, maxWeight, imageOnePath, imageTwoPath, userId, id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Ćwiczenie o podanym ID nie zostało znalezione' });
+    }
+
+    res.json(result.rows[0]);  // Zwracamy zaktualizowane ćwiczenie
+  } catch (err) {
+    console.error('Błąd przy edytowaniu ćwiczenia:', err);
+    res.status(500).json({ error: 'Błąd przy edytowaniu ćwiczenia' });
+  }
+});
+
+// Metoda do usuwania ćwiczeń (DELETE)
+app.delete('/api/exercises/:id', async (req, res) => {
+  const { id } = req.params;  // ID ćwiczenia z parametru URL
+
+  try {
+    // Zapytanie SQL do usunięcia ćwiczenia
+    const result = await client.query('DELETE FROM exercises WHERE id = $1 RETURNING *', [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Ćwiczenie o podanym ID nie zostało znalezione' });
+    }
+
+    res.json({ message: 'Ćwiczenie zostało pomyślnie usunięte', deletedExercise: result.rows[0] });
+  } catch (err) {
+    console.error('Błąd przy usuwaniu ćwiczenia:', err);
+    res.status(500).json({ error: 'Błąd przy usuwaniu ćwiczenia' });
+  }
+});
+
 
 // Udostępnienie folderu `uploads/` do publicznego dostępu
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
