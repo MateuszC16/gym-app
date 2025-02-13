@@ -23,11 +23,15 @@ class ExerciseList {
         imagesHtml += `<img src="http://localhost:3000${exercise.image_two}" width="100" height="100" /> `;
       }
 
+      // Formatowanie daty osiągnięcia maksymalnego ciężaru (jeśli istnieje)
+      const maxWeightDate = exercise.max_weight_date ? new Date(exercise.max_weight_date).toLocaleDateString() : 'Brak daty';
+
       tr.innerHTML = `
         <td>${exercise.name}</td>
         <td>${exercise.muscle_group}</td>
         <td>${exercise.current_weight} kg</td>
         <td>${exercise.max_weight} kg</td>
+        <td>${maxWeightDate}</td>  <!-- Wyświetlanie daty -->
         <td>${imagesHtml || 'Brak zdjęć'}</td>  <!-- Wyświetlanie zdjęć -->
         <td>
           <button onclick="exerciseList.editExercise(${exercise.id})">Edytuj</button>
@@ -44,12 +48,14 @@ class ExerciseList {
     const muscleGroup = prompt('Nowa partia mięśniowa:');
     const currentWeight = prompt('Nowy aktualny ciężar (kg):');
     const maxWeight = prompt('Nowy maksymalny ciężar (kg):');
+    const maxWeightDate = prompt('Nowa data osiągnięcia maksymalnego obciążenia (YYYY-MM-DD):');
 
     const exerciseData = {
       name,
       muscleGroup,
       currentWeight: parseFloat(currentWeight),
       maxWeight: parseFloat(maxWeight),
+      maxWeightDate  // Dodajemy datę maksymalnego obciążenia
     };
 
     const response = await fetch(`http://localhost:3000/api/exercises/${id}`, {
