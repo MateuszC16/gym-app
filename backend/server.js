@@ -20,7 +20,7 @@ app.use(cors());
 // Umożliwiamy obsługę JSON w ciałach żądań
 app.use(express.json());
 
-// Ustawienia multer do przesyłania zdjęć
+// Konfiguracja Multera - oczekiwanie na pola 'imageOne' i 'imageTwo'
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');  // Folder, w którym będą przechowywane zdjęcia
@@ -35,7 +35,14 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+// Obsługuje dwa pliki 'imageOne' i 'imageTwo'
+const upload = multer({ 
+  storage: storage, 
+  fields: [
+    { name: 'imageOne', maxCount: 1 }, 
+    { name: 'imageTwo', maxCount: 1 }
+  ]
+});
 
 // Połączenie z bazą danych PostgreSQL
 const client = new Client({
@@ -70,8 +77,8 @@ app.post('/api/exercises', upload.array('images', 2), async (req, res) => {
   const parsedMaxWeightDate = (maxWeightDate === 'null' || maxWeightDate === '') ? null : new Date(maxWeightDate);
 
   // Przypisujemy ścieżki do zdjęć (jeśli istnieją)
-  const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
-  const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
+  const imageOnePath = images && images['imageOne'] ? `/uploads/${images['imageOne'][0].filename}` : null;
+  const imageTwoPath = images && images['imageTwo'] ? `/uploads/${images['imageTwo'][0].filename}` : null;
 
   // Sztywno ustawiony user_id (na razie)
   const userId = 1; // Zastąp to dynamicznie, gdy zaimplementujesz sesję użytkownika
@@ -105,24 +112,51 @@ app.get('/api/exercises', async (req, res) => {
   }
 });
 
-// Endpoint do edytowania ćwiczeń
-app.put('/api/exercises/:id', upload.array('images', 2), async (req, res) => {
+// Endpoint do pobierania ćwiczenia po ID
+app.get('/api/exercises/:id', async (req, res) => {
+  const { id } = req.params;
   try {
-    const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
-    const images = req.files;
+    const result = await client.query('SELECT * FROM exercises WHERE id = $1', [id]);
 
-    // Jeśli maxWeight jest "null", zamień to na wartość null
-    const parsedMaxWeight = (maxWeight === 'null' || maxWeight === '') ? null : parseFloat(maxWeight);
-    const parsedMaxWeightDate = (maxWeightDate === 'null' || maxWeightDate === '') ? null : new Date(maxWeightDate);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Ćwiczenie o podanym ID nie zostało znalezione' });
+    }
 
-    const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
-    const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
+    res.json(result.rows[0]);  // Zwracamy dane ćwiczenia
+  } catch (err) {
+    console.error('Błąd przy pobieraniu ćwiczenia:', err);
+    res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczenia' });
+  }
+});
+app.put('/api/exercises/:id', upload.array('images', 2), async (req, res) => {
+  const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
+  const images = req.files;
 
-    // Aktualizacja ćwiczenia w bazie danych
+  // Jeśli maxWeight lub currentWeight są pustymi ciągami, przypisz NULL
+  const parsedCurrentWeight = currentWeight === '' || currentWeight === null ? null : parseFloat(currentWeight);
+  const parsedMaxWeight = maxWeight === '' || maxWeight === null ? null : parseFloat(maxWeight);
+  const parsedMaxWeightDate = maxWeightDate === '' || maxWeightDate === null ? null : new Date(maxWeightDate);
+
+  // Jeżeli nie ma nowych zdjęć, pozostawiamy stare zdjęcia
+  const imageOnePath = images && images['imageOne'] ? `/uploads/${images['imageOne'][0].filename}` : req.body.imageOne || null;
+  const imageTwoPath = images && images['imageTwo'] ? `/uploads/${images['imageTwo'][0].filename}` : req.body.imageTwo || null;
+
+  try {
     const result = await client.query(
       `UPDATE exercises SET name = $1, muscle_group = $2, current_weight = $3, max_weight = $4, 
-      max_weight_date = $5, image_one = $6, image_two = $7 WHERE id = $8 RETURNING *`,
-      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, req.params.id]
+      max_weight_date = $5, 
+      image_one = COALESCE($6, image_one), image_two = COALESCE($7, image_two) 
+      WHERE id = $8 RETURNING *`,
+      [
+        name, 
+        muscleGroup, 
+        parsedCurrentWeight,  // Zmienione na parsedCurrentWeight
+        parsedMaxWeight,      // Zmienione na parsedMaxWeight
+        parsedMaxWeightDate,  // Zmienione na parsedMaxWeightDate
+        imageOnePath, 
+        imageTwoPath, 
+        req.params.id
+      ]
     );
 
     if (result.rowCount === 0) {
@@ -135,6 +169,7 @@ app.put('/api/exercises/:id', upload.array('images', 2), async (req, res) => {
     res.status(500).json({ error: 'Błąd przy edytowaniu ćwiczenia' });
   }
 });
+
 
 // Endpoint do usuwania ćwiczeń
 app.delete('/api/exercises/:id', async (req, res) => {
@@ -183,25 +218,8 @@ app.delete('/api/exercises/:id', async (req, res) => {
   }
 });
 
-// Udostępnienie folderu `uploads/` do publicznego dostępu
+// Udostępnienie folderu uploads/ do publicznego dostępu
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Endpoint do pobierania ćwiczenia po ID
-app.get('/api/exercises/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await client.query('SELECT * FROM exercises WHERE id = $1', [id]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Ćwiczenie o podanym ID nie zostało znalezione' });
-    }
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Błąd przy pobieraniu ćwiczenia:', err);
-    res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczenia' });
-  }
-});
 
 // Serwer nasłuchuje na porcie 3000
 app.listen(3000, () => {
