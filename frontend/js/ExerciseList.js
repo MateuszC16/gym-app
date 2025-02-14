@@ -85,39 +85,70 @@ class ExerciseList {
     modal.style.height = '100vh';
     modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
   }
-  
-
-  // Funkcja do edytowania ćwiczenia
   async editExercise(id) {
-    const name = prompt('Nowa nazwa ćwiczenia:');
-    const muscleGroup = prompt('Nowa partia mięśniowa:');
-    const currentWeight = prompt('Nowy aktualny ciężar (kg):');
-    const maxWeight = prompt('Nowy maksymalny ciężar (kg):');
-    const maxWeightDate = prompt('Nowa data osiągnięcia maksymalnego obciążenia (YYYY-MM-DD):');
-
-    const exerciseData = {
-      name,
-      muscleGroup,
-      currentWeight: parseFloat(currentWeight),
-      maxWeight: parseFloat(maxWeight),
-      maxWeightDate  // Dodajemy datę maksymalnego obciążenia
-    };
-
-    const response = await fetch(`http://localhost:3000/api/exercises/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(exerciseData)
+    const response = await fetch(`http://localhost:3000/api/exercises/${id}`);
+    const exercise = await response.json();
+  
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h2>Edytuj ćwiczenie</h2>
+        <label for="name">Nazwa ćwiczenia</label>
+        <input type="text" id="name" value="${exercise.name}">
+        
+        <label for="muscleGroup">Partia mięśniowa</label>
+        <input type="text" id="muscleGroup" value="${exercise.muscle_group}">
+        
+        <label for="currentWeight">Aktualny ciężar (kg)</label>
+        <input type="number" id="currentWeight" value="${exercise.current_weight}">
+        
+        <label for="maxWeight">Maksymalny ciężar (kg)</label>
+        <input type="number" id="maxWeight" value="${exercise.max_weight || ''}">
+        
+        <label for="maxWeightDate">Data osiągnięcia maksymalnego ciężaru</label>
+        <input type="date" id="maxWeightDate" value="${exercise.max_weight_date ? new Date(exercise.max_weight_date).toLocaleDateString('en-CA') : ''}">
+        
+        <button id="saveButton">Zapisz</button>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Handle saving the edited exercise
+    document.getElementById('saveButton').addEventListener('click', async () => {
+      const updatedExercise = {
+        name: document.getElementById('name').value,
+        muscleGroup: document.getElementById('muscleGroup').value,
+        currentWeight: document.getElementById('currentWeight').value,
+        maxWeight: document.getElementById('maxWeight').value,
+        maxWeightDate: document.getElementById('maxWeightDate').value
+      };
+  
+      const response = await fetch(`http://localhost:3000/api/exercises/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedExercise)
+      });
+  
+      if (response.ok) {
+        modal.remove();  // Close modal
+        this.renderExercises();  // Re-render exercises
+      } else {
+        alert('Błąd podczas edytowania ćwiczenia');
+      }
     });
-
-    if (response.ok) {
-      this.renderExercises();  // Zaktualizuj listę ćwiczeń
-    } else {
-      console.error('Błąd przy edytowaniu ćwiczenia');
-    }
+    
+    // Handle closing the modal
+    const closeButton = document.createElement('button');
+    closeButton.classList.add('modal-close');
+    closeButton.innerHTML = 'Powrót';
+    closeButton.onclick = () => modal.remove();
+    modal.appendChild(closeButton);
   }
-
+  
   // Funkcja do usuwania ćwiczenia
   async deleteExercise(id) {
     if (confirm('Czy na pewno chcesz usunąć to ćwiczenie?')) {

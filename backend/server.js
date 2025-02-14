@@ -8,6 +8,7 @@ import fs from 'fs';
 
 const { Client } = pkg;
 
+// Ustawienia __dirname dla modułów ES
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -53,50 +54,46 @@ client.connect()
     console.error('Błąd połączenia z bazą:', err);
   });
 
-  app.post('/api/exercises', upload.array('images', 2), async (req, res) => {
-    const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
-    const images = req.files;  // Pliki przesyłane przez multer
-    
-    // Logowanie formularza
-    console.log('Form data:', { name, muscleGroup, currentWeight, maxWeight, maxWeightDate });
-    console.log('Files:', images);
-    
-    // Jeśli maxWeight jest "null", zamień to na wartość null
-    const parsedMaxWeight = (maxWeight === 'null' || maxWeight === '') ? null : parseFloat(maxWeight);
-  
-    // Jeśli maxWeightDate jest "null", ustaw na null
-    const parsedMaxWeightDate = (maxWeightDate === 'null' || maxWeightDate === '') ? null : new Date(maxWeightDate);
-  
-    // Przypisujemy ścieżki do zdjęć (jeśli istnieją)
-    const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
-    const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
-    
-    // Sztywno ustawiony user_id (na razie)
-    const userId = 1; // Zastąp to dynamicznie, gdy zaimplementujesz sesję użytkownika
-    
-    console.log('imageOnePath:', imageOnePath);
-    console.log('imageTwoPath:', imageTwoPath);
-    console.log('Parsed Max Weight:', parsedMaxWeight);
-    console.log('Parsed Max Weight Date:', parsedMaxWeightDate);
-  
-    try {
-      // Zapytanie SQL do dodania ćwiczenia, w tym daty maxWeightDate
-      const result = await client.query(
-        'INSERT INTO exercises(name, muscle_group, current_weight, max_weight, max_weight_date, image_one, image_two, user_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-        [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, userId]
-      );
-  
-      res.json(result.rows[0]);  // Zwracamy dodane ćwiczenie
-    } catch (err) {
-      console.error('Błąd przy dodawaniu ćwiczenia:', err);  // Logowanie błędów serwera
-      res.status(500).json({ error: 'Błąd przy dodawaniu ćwiczenia' });
-    }
-  });
-  
-  
-  
-  
-  
+// Endpoint do dodawania ćwiczenia
+app.post('/api/exercises', upload.array('images', 2), async (req, res) => {
+  const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
+  const images = req.files;  // Pliki przesyłane przez multer
+
+  // Logowanie formularza
+  console.log('Form data:', { name, muscleGroup, currentWeight, maxWeight, maxWeightDate });
+  console.log('Files:', images);
+
+  // Jeśli maxWeight jest "null", zamień to na wartość null
+  const parsedMaxWeight = (maxWeight === 'null' || maxWeight === '') ? null : parseFloat(maxWeight);
+
+  // Jeśli maxWeightDate jest "null", ustaw na null
+  const parsedMaxWeightDate = (maxWeightDate === 'null' || maxWeightDate === '') ? null : new Date(maxWeightDate);
+
+  // Przypisujemy ścieżki do zdjęć (jeśli istnieją)
+  const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
+  const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
+
+  // Sztywno ustawiony user_id (na razie)
+  const userId = 1; // Zastąp to dynamicznie, gdy zaimplementujesz sesję użytkownika
+
+  console.log('imageOnePath:', imageOnePath);
+  console.log('imageTwoPath:', imageTwoPath);
+  console.log('Parsed Max Weight:', parsedMaxWeight);
+  console.log('Parsed Max Weight Date:', parsedMaxWeightDate);
+
+  try {
+    // Zapytanie SQL do dodania ćwiczenia, w tym daty maxWeightDate
+    const result = await client.query(
+      'INSERT INTO exercises(name, muscle_group, current_weight, max_weight, max_weight_date, image_one, image_two, user_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, userId]
+    );
+
+    res.json(result.rows[0]);  // Zwracamy dodane ćwiczenie
+  } catch (err) {
+    console.error('Błąd przy dodawaniu ćwiczenia:', err);  // Logowanie błędów serwera
+    res.status(500).json({ error: 'Błąd przy dodawaniu ćwiczenia' });
+  }
+});
 
 // Endpoint do pobierania ćwiczeń
 app.get('/api/exercises', async (req, res) => {
@@ -108,28 +105,24 @@ app.get('/api/exercises', async (req, res) => {
   }
 });
 
-// Metoda do edytowania ćwiczeń (PUT)
+// Endpoint do edytowania ćwiczeń
 app.put('/api/exercises/:id', upload.array('images', 2), async (req, res) => {
-  const { id } = req.params;  // ID ćwiczenia z parametru URL
-  const { name, muscleGroup, currentWeight, maxWeight, userId } = req.body;
-  const images = req.files;  // Pliki przesyłane przez multer
-
-  // Logowanie danych przychodzących
-  console.log('Received update data:', req.body);  // Sprawdzamy dane ćwiczenia
-  console.log('Received files:', images);  // Sprawdzamy przesłane zdjęcia
-
-  // Przypisujemy ścieżki do zdjęć (jeśli istnieją)
-  const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
-  const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
-
-  console.log('imageOnePath:', imageOnePath);
-  console.log('imageTwoPath:', imageTwoPath);
-
   try {
-    // Zapytanie SQL do edytowania ćwiczenia
+    const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
+    const images = req.files;
+
+    // Jeśli maxWeight jest "null", zamień to na wartość null
+    const parsedMaxWeight = (maxWeight === 'null' || maxWeight === '') ? null : parseFloat(maxWeight);
+    const parsedMaxWeightDate = (maxWeightDate === 'null' || maxWeightDate === '') ? null : new Date(maxWeightDate);
+
+    const imageOnePath = images && images[0] ? `/uploads/${images[0].filename}` : null;
+    const imageTwoPath = images && images[1] ? `/uploads/${images[1].filename}` : null;
+
+    // Aktualizacja ćwiczenia w bazie danych
     const result = await client.query(
-      'UPDATE exercises SET name = $1, muscle_group = $2, current_weight = $3, max_weight = $4, image_one = $5, image_two = $6, user_id = $7 WHERE id = $8 RETURNING *',
-      [name, muscleGroup, currentWeight, maxWeight, imageOnePath, imageTwoPath, userId, id]
+      `UPDATE exercises SET name = $1, muscle_group = $2, current_weight = $3, max_weight = $4, 
+      max_weight_date = $5, image_one = $6, image_two = $7 WHERE id = $8 RETURNING *`,
+      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, req.params.id]
     );
 
     if (result.rowCount === 0) {
@@ -143,13 +136,12 @@ app.put('/api/exercises/:id', upload.array('images', 2), async (req, res) => {
   }
 });
 
-
-// Metoda do usuwania ćwiczeń (DELETE)
+// Endpoint do usuwania ćwiczeń
 app.delete('/api/exercises/:id', async (req, res) => {
-  const { id } = req.params;  // ID ćwiczenia z parametru URL
+  const { id } = req.params;
 
   try {
-    // Najpierw pobieramy ćwiczenie z bazy danych, aby uzyskać ścieżki do zdjęć
+    // Pobieranie ćwiczenia z bazy danych, aby uzyskać ścieżki do zdjęć
     const result = await client.query('SELECT * FROM exercises WHERE id = $1', [id]);
 
     if (result.rowCount === 0) {
@@ -160,9 +152,6 @@ app.delete('/api/exercises/:id', async (req, res) => {
     const imageOnePath = exercise.image_one ? path.join(__dirname, 'uploads', exercise.image_one.split('/').pop()) : null;
     const imageTwoPath = exercise.image_two ? path.join(__dirname, 'uploads', exercise.image_two.split('/').pop()) : null;
 
-    console.log('Ścieżka do pierwszego zdjęcia:', imageOnePath);
-    console.log('Ścieżka do drugiego zdjęcia:', imageTwoPath);
-
     // Usuwamy zdjęcia z folderu, jeśli istnieją
     if (imageOnePath && fs.existsSync(imageOnePath)) {
       fs.unlink(imageOnePath, (err) => {
@@ -172,8 +161,6 @@ app.delete('/api/exercises/:id', async (req, res) => {
           console.log(`Usunięto zdjęcie: ${imageOnePath}`);
         }
       });
-    } else {
-      console.log(`Plik ${imageOnePath} nie istnieje lub nie można go znaleźć.`);
     }
 
     if (imageTwoPath && fs.existsSync(imageTwoPath)) {
@@ -184,11 +171,9 @@ app.delete('/api/exercises/:id', async (req, res) => {
           console.log(`Usunięto zdjęcie: ${imageTwoPath}`);
         }
       });
-    } else {
-      console.log(`Plik ${imageTwoPath} nie istnieje lub nie można go znaleźć.`);
     }
 
-    // Zapytanie SQL do usunięcia ćwiczenia
+    // Usuwanie ćwiczenia z bazy
     await client.query('DELETE FROM exercises WHERE id = $1', [id]);
 
     res.json({ message: 'Ćwiczenie zostało pomyślnie usunięte' });
@@ -198,12 +183,27 @@ app.delete('/api/exercises/:id', async (req, res) => {
   }
 });
 
-
-
 // Udostępnienie folderu `uploads/` do publicznego dostępu
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Endpoint do pobierania ćwiczenia po ID
+app.get('/api/exercises/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await client.query('SELECT * FROM exercises WHERE id = $1', [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Ćwiczenie o podanym ID nie zostało znalezione' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Błąd przy pobieraniu ćwiczenia:', err);
+    res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczenia' });
+  }
+});
+
 // Serwer nasłuchuje na porcie 3000
 app.listen(3000, () => {
-  console.log('Backend działa na http://localhost:3000');
+  console.log('Serwer działa na porcie 3000');
 });
