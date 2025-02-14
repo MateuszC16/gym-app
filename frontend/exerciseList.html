@@ -7,24 +7,13 @@
   <link rel="stylesheet" href="css/exerciseList.css">
 </head>
 <body>
-  <h1>Lista ćwiczeń</h1>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Nazwa ćwiczenia</th>
-        <th>Partia mięśniowa</th>
-        <th>Aktualny ciężar</th>
-        <th>Maksymalny ciężar</th>
-        <th>Data osiągnięcia maksymalnego obciążenia</th>  <!-- Nowa kolumna na datę -->
-        <th>Zdjęcia</th>  <!-- Kolumna na zdjęcia -->
-        <th>Akcje</th>
-      </tr>
-    </thead>
-    <tbody id="exercise-list">
+  <div class="container">
+    <h1>Lista ćwiczeń</h1>
+    
+    <div id="exercise-list" class="exercise-list">
       <!-- Lista ćwiczeń pojawi się tutaj -->
-    </tbody>
-  </table>
+    </div>
+  </div>
 
   <script src="js/ExerciseList.js"></script>  <!-- Ładowanie skryptu odpowiedzialnego za wyświetlanie ćwiczeń -->
 </body>

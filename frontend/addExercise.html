@@ -7,41 +7,42 @@
   <link rel="stylesheet" href="css/addExercise.css">
 </head>
 <body>
-  <h1>Dodaj nowe ćwiczenie</h1>
-  
-  <form id="exercise-form" enctype="multipart/form-data">
-    <label for="name">Nazwa ćwiczenia:</label>
-    <input type="text" id="name" name="name" required>
+  <div class="container">
+    <h1>Dodaj nowe ćwiczenie</h1>
     
-    <label for="muscle-group">Partia mięśniowa:</label>
-    <select id="muscle-group" name="muscle-group" required>
-      <option value="">Wybierz partię mięśniową</option>
-      <option value="klatka piersiowa">Klatka piersiowa</option>
-      <option value="plecy">Plecy</option>
-      <option value="barki">Barki</option>
-      <option value="ramiona">Ramiona</option>
-      <option value="nogi">Nogi</option>
-      <option value="brzuch">Brzuch</option>
-      <option value="łydki">Łydki</option>
-      <option value="przedramiona">Przedramiona</option>
-      <option value="pośladki">Pośladki</option>
-    </select>
-    
-    <label for="current-weight">Aktualny ciężar:</label>
-    <input type="number" id="current-weight" name="current-weight" required>
+    <form id="exercise-form" enctype="multipart/form-data">
+      <label for="name">Nazwa ćwiczenia:</label>
+      <input type="text" id="name" name="name" required>
+      
+      <label for="muscle-group">Partia mięśniowa:</label>
+      <select id="muscle-group" name="muscle-group" required>
+        <option value="">Wybierz partię mięśniową</option>
+        <option value="klatka piersiowa">Klatka piersiowa</option>
+        <option value="plecy">Plecy</option>
+        <option value="barki">Barki</option>
+        <option value="ramiona">Ramiona</option>
+        <option value="nogi">Nogi</option>
+        <option value="brzuch">Brzuch</option>
+        <option value="łydki">Łydki</option>
+        <option value="przedramiona">Przedramiona</option>
+        <option value="pośladki">Pośladki</option>
+      </select>
+      
+      <label for="current-weight">Aktualny ciężar:</label>
+      <input type="number" id="current-weight" name="current-weight" required>
 
-    <label for="max-weight">Maksymalny ciężar:</label>
-    <input type="number" id="max-weight" name="max-weight" >
+      <label for="max-weight">Maksymalny ciężar:</label>
+      <input type="number" id="max-weight" name="max-weight" >
 
-    <label for="max-weight-date">Data osiągniętego maksymalnego ciężaru:</label>
-    <input type="date" id="max-weight-date" name="max-weight-date" >
-
-    
-    <label for="images">Zdjęcia (maksymalnie 2):</label>
-    <input type="file" id="images" name="images" multiple>
-    
-    <button type="submit">Dodaj ćwiczenie</button>
-  </form>
+      <label for="max-weight-date">Data osiągniętego maksymalnego ciężaru:</label>
+      <input type="date" id="max-weight-date" name="max-weight-date" >
+      
+      <label for="images">Zdjęcia (maksymalnie 2):</label>
+      <input type="file" id="images" name="images" multiple>
+      
+      <button type="submit">Dodaj ćwiczenie</button>
+    </form>
+  </div>
 
   <script src="js/addExercise.js"></script>  <!-- Skrypt JavaScript do obsługi formularza -->
 </body>

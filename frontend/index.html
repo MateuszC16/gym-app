@@ -4,16 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Główne menu</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mainForm.css">
 </head>
 <body>
-  <h1>Witaj w aplikacji do zarządzania ćwiczeniami!</h1>
-  
-  <div>
-    <a href="addExercise.html">Dodaj nowe ćwiczenie</a>
-    <a href="exerciseList.html">Zobacz listę ćwiczeń</a>
+  <div class="container">
+    <h1>Witaj w aplikacji do zarządzania ćwiczeniami!</h1>
+    <div class="menu">
+      <a href="addExercise.html" class="menu-item">Dodaj nowe ćwiczenie</a>
+      <a href="exerciseList.html" class="menu-item">Zobacz listę ćwiczeń</a>
+      <a href="trainingDays.html" class="menu-item">Moje dni treningowe</a>
+      <a href="addTrainingDay.html" class="menu-item">Utwórz nowy dzień treningowy</a>
+    </div>
   </div>
 
-  <script src="js/App.js"></script>  <!-- Ładowanie wspólnego skryptu -->
+  <script src="js/App.js"></script>
 </body>
 </html>

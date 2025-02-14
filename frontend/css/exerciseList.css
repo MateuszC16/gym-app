@@ -1,21 +1,196 @@
-/* exerciseList.css */
+/* Resetowanie marginesów i paddingu */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-table {
-    width: 80%;
-    margin: 0 auto;
-    border-collapse: collapse;
+/* Styl dla całej strony */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.container {
+  text-align: center;
+  width: 100%;
+  max-width: 900px;
+}
+
+h1 {
+  font-size: 2.8rem; /* Zwiększono rozmiar czcionki */
+  margin-bottom: 20px;
+  color: #ecf0f1;
+}
+
+/* Stylizacja kart ćwiczeń */
+.exercise-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.exercise-card {
+  background-color: #34495e;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column; /* Dodano flexbox */
+  justify-content: space-between; /* Rozciąganie w pionie */
+  height: 100%; /* Ustalamy pełną wysokość */
+}
+
+.exercise-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Nagłówek karty ćwiczenia */
+.exercise-card h2 {
+  font-size: 1.8rem; /* Zwiększono rozmiar czcionki */
+  margin-bottom: 10px;
+  color: #ecf0f1;
+}
+
+/* Detale ćwiczenia */
+.exercise-card p {
+  font-size: 1.1rem; /* Zwiększono rozmiar czcionki */
+  color: #bdc3c7;
+  margin-bottom: 8px;
+}
+
+/* Pogrubienie wartości */
+.exercise-card p strong {
+  font-weight: bold;
+}
+
+/* Styl dla zdjęć */
+.exercise-card .images {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.exercise-card .images img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.exercise-card .images img:hover {
+  transform: scale(1.1);
+}
+
+/* Styl dla przycisków */
+.exercise-card .actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto; /* Zapewnia, że przyciski będą na dole karty */
+}
+
+button {
+  background-color: #1abc9c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background-color: #16a085;
+  transform: translateY(-3px);
+}
+
+button:active {
+  background-color: #1abc9c;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px; /* Zwiększenie czcionki dla urządzeń mobilnych */
   }
-  
-  th, td {
-    padding: 10px;
-    border: 1px solid #ccc;
+
+  h1 {
+    font-size: 2.2rem; /* Zwiększenie czcionki nagłówka */
+    margin-bottom: 10px;
   }
-  
-  th {
-    background-color: #f4f4f4;
+
+  .exercise-card {
+    padding: 15px;
   }
-  
-  img {
-    max-width: 50px;
+
+  .exercise-card h2 {
+    font-size: 1.6rem; /* Zwiększenie czcionki w kartach */
   }
-  
+
+  .exercise-card p {
+    font-size: 1rem; /* Zwiększenie czcionki w kartach */
+  }
+}
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 25px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.modal-image {
+  max-width: 60%;   /* Zmniejszenie rozmiaru obrazu */
+  max-height: 80%;  /* Zmniejszenie wysokości obrazu */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.modal .modal-close {
+  font-size: 30px;
+  padding: 10px 20px;
+  background-color: #ff6347; /* Kolor tła przycisku */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal .modal-close:hover {
+  background-color: #ff4500; /* Zmiana koloru przycisku przy najechaniu */
+}
+
+.modal .modal-close:focus {
+  outline: none; /* Usunięcie obramowania przy kliknięciu */
+}
+

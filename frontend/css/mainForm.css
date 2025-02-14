@@ -14,7 +14,6 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  padding: 20px;
 }
 
 .container {
@@ -33,44 +32,32 @@ h1 {
   color: #ecf0f1; /* Jaśniejszy tekst */
 }
 
-/* Formularz */
-form {
+/* Styl dla menu */
+.menu {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-label {
-  font-size: 1.2rem;
-  color: #ecf0f1;
-  text-align: left;
-}
-
-input, select, button {
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #1abc9c;
-}
-
-input, select {
-  background-color: #2c3e50;
-  color: #ecf0f1;
-}
-
-button {
-  background-color: #1abc9c; /* Jasny kolor przycisku */
+.menu-item {
+  background-color: #1abc9c; /* Jasny kolor przycisków */
   color: white;
-  cursor: pointer;
+  text-decoration: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, transform 0.3s;
 }
 
-button:hover {
-  background-color: #16a085; /* Ciemniejszy odcień przycisku na hover */
+/* Efekty hover */
+.menu-item:hover {
+  background-color: #16a085; /* Ciemniejszy odcień przycisków na hover */
   transform: translateY(-3px);
 }
 
-button:active {
+.menu-item:active {
   background-color: #1abc9c; /* Kolor po kliknięciu */
 }
 
@@ -89,8 +76,8 @@ button:active {
     padding: 15px; /* Mniejsze marginesy wewnętrzne na urządzeniach mobilnych */
   }
 
-  input, select, button {
-    font-size: 1rem; /* Zmniejszenie czcionki w formularzu */
+  .menu-item {
+    font-size: 1rem; /* Zmniejszenie rozmiaru czcionki przycisków */
     padding: 12px; /* Mniejsze przyciski na małych ekranach */
   }
 }
