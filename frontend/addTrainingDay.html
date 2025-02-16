@@ -5,26 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dodaj Dzień Treningowy</title>
   <link rel="stylesheet" href="css/addTrainingDay.css">
-  <style>
-    /* Modal Style */
-    .modal {
-      display: none; /* Ukryty domyślnie */
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.4); /* Tło modal */
-    }
-    .modal-content {
-      background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -38,12 +18,6 @@
       <!-- Wybór lokalizacji -->
       <label for="location">Lokalizacja:</label>
       <input type="text" id="location" name="location" placeholder="Wpisz lokalizację" required>
-    
-      <!-- Lista ćwiczeń dodanych do dnia treningowego -->
-      <h3>Dodane ćwiczenia do dnia treningowego:</h3>
-      <ul id="addedExercisesList">
-        <!-- Lista ćwiczeń będzie dodawana tutaj -->
-      </ul>
     
       <!-- Wybór ćwiczenia -->
       <div class="exercise-selection">
@@ -64,16 +38,11 @@
     </form>
   </div>
 
-  <!-- Modal do wyświetlania szczegółów ćwiczenia -->
-  <div id="viewExerciseModal" class="modal">
-    <div class="modal-content">
-      <h3>Szczegóły ćwiczenia</h3>
-      <div id="exerciseDetails">
-        <!-- Szczegóły ćwiczenia będą dodawane tutaj -->
-      </div>
-      <button type="button" id="closeViewModal">Zamknij</button>
-    </div>
-  </div>
+  <!-- Lista ćwiczeń dodanych do dnia treningowego -->
+  <h3>Dodane ćwiczenia do dnia treningowego:</h3>
+  <ul id="addedExercisesList">
+    <!-- Lista ćwiczeń będzie dodawana tutaj -->
+  </ul>
 
   <script src="js/AddTrainingDay.js"></script>
 </body>
