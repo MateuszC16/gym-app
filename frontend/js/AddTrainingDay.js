@@ -39,18 +39,21 @@ document.addEventListener('DOMContentLoaded', function () {
         <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
       `;
       exerciseList.appendChild(li);
-      selectedExercises.push(exercise);  // Dodajemy ćwiczenie do listy
+      selectedExercises.push(exercise);  // Dodajemy ćwiczenie do tablicy
     };
   
-    // Funkcja do usuwania ćwiczenia z listy ćwiczeń wyświetlanej na stronie
+    // Funkcja do usuwania ćwiczenia z listy ćwiczeń wyświetlanej na stronie i z tablicy
     const removeExerciseFromList = (exerciseId) => {
-      const exerciseList = document.getElementById('addedExercisesList');
+      // Usuwamy ćwiczenie z tablicy selectedExercises
       const exerciseIndex = selectedExercises.findIndex(e => e.id === exerciseId);
       if (exerciseIndex >= 0) {
-        selectedExercises.splice(exerciseIndex, 1);  // Usuwamy ćwiczenie z listy
-        const exerciseItem = exerciseList.querySelector(`button[data-id="${exerciseId}"]`).closest('li');
-        exerciseItem.remove();  // Usuwamy element li z DOMu
+        selectedExercises.splice(exerciseIndex, 1);  // Usuwamy ćwiczenie z tablicy
       }
+      
+      // Usuwamy ćwiczenie z DOM
+      const exerciseList = document.getElementById('addedExercisesList');
+      const exerciseItem = exerciseList.querySelector(`button[data-id="${exerciseId}"]`).closest('li');
+      exerciseItem.remove();
     };
   
     // Wyświetlanie szczegółów ćwiczenia w modalu
