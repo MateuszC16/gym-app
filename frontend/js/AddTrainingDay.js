@@ -28,64 +28,93 @@ document.addEventListener('DOMContentLoaded', function () {
     const addExerciseToList = (exercise) => {
       const exerciseList = document.getElementById('addedExercisesList');
       const li = document.createElement('li');
+      li.classList.add('exercise-item');
       li.innerHTML = `
-        <strong>${exercise.name}</strong><br>
-        Aktualny ciężar: ${exercise.current_weight ? exercise.current_weight + ' kg' : 'Brak danych'}<br>
+        <div class="exercise-name">${exercise.name}</div>
+        <div class="muscle-group">${exercise.muscle_group || 'Brak danych'}</div>
+        Aktualny ciężar: <input type="number" value="${exercise.current_weight || ''}" class="weightInput" data-id="${exercise.id}"><br>
         ${exercise.image_one ? `<img src="http://127.0.0.1:3000${exercise.image_one}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
         ${exercise.image_two ? `<img src="http://127.0.0.1:3000${exercise.image_two}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
+        <button class="viewDetailsBtn" data-id="${exercise.id}">Zobacz więcej</button>
+        <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
       `;
       exerciseList.appendChild(li);
-  
-      // Dodaj ćwiczenie do listy dodanych ćwiczeń
-      selectedExercises.push(exercise);  // Zapisujemy całe ćwiczenie w tablicy
+      selectedExercises.push(exercise);  // Dodajemy ćwiczenie do listy
     };
   
-    // Funkcja do dodawania ćwiczenia do listy na froncie (nie zapisujemy do bazy)
-    const addExerciseToTrainingDay = async (exerciseId) => {
+    // Funkcja do usuwania ćwiczenia z listy ćwiczeń wyświetlanej na stronie
+    const removeExerciseFromList = (exerciseId) => {
+      const exerciseList = document.getElementById('addedExercisesList');
+      const exerciseIndex = selectedExercises.findIndex(e => e.id === exerciseId);
+      if (exerciseIndex >= 0) {
+        selectedExercises.splice(exerciseIndex, 1);  // Usuwamy ćwiczenie z listy
+        const exerciseItem = exerciseList.querySelector(`button[data-id="${exerciseId}"]`).closest('li');
+        exerciseItem.remove();  // Usuwamy element li z DOMu
+      }
+    };
+  
+    // Wyświetlanie szczegółów ćwiczenia w modalu
+    const viewExerciseDetails = (exerciseId) => {
       const exercise = exercisesList.find(e => e.id === parseInt(exerciseId));
-      if (!exercise) return;  // Jeżeli ćwiczenie nie istnieje, nie dodawaj
-  
-      addExerciseToList(exercise);  // Dodaj ćwiczenie do listy na froncie, ale nie zapisuj jeszcze w bazie danych
+      const detailsDiv = document.getElementById('exerciseDetails');
+      detailsDiv.innerHTML = `
+        <strong>${exercise.name}</strong><br>
+        Maksymalny ciężar: ${exercise.max_weight || 'Brak danych'}<br>
+        Data osiągnięcia maksymalnego ciężaru: ${exercise.max_weight_date || 'Brak danych'}<br>
+        ${exercise.image_one ? `<img src="http://127.0.0.1:3000${exercise.image_one}" style="width: 250px; height: 250px; margin: 10px;">` : ''}
+        ${exercise.image_two ? `<img src="http://127.0.0.1:3000${exercise.image_two}" style="width: 250px; height: 250px; margin: 10px;">` : ''}
+      `;
+      document.getElementById('viewExerciseModal').style.display = 'flex';
     };
+  
+    // Zamknięcie modala
+    document.getElementById('closeViewModal').addEventListener('click', () => {
+      document.getElementById('viewExerciseModal').style.display = 'none';
+    });
   
     // Wywołaj fetchExercises, aby pobrać ćwiczenia
     fetchExercises();
   
+    // Obsługuje kliknięcie przycisku "Zobacz więcej"
+    document.getElementById('addedExercisesList').addEventListener('click', (e) => {
+      if (e.target && e.target.classList.contains('viewDetailsBtn')) {
+        const exerciseId = e.target.getAttribute('data-id');
+        viewExerciseDetails(exerciseId);
+      }
+  
+      // Obsługuje kliknięcie przycisku "Usuń" do usunięcia ćwiczenia z listy
+      if (e.target && e.target.classList.contains('removeExerciseBtn')) {
+        const exerciseId = e.target.getAttribute('data-id');
+        removeExerciseFromList(exerciseId); // Usuwamy ćwiczenie z listy
+      }
+    });
+  
     // Obsługuje kliknięcie przycisku do dodawania ćwiczenia
-    const addExerciseBtn = document.getElementById('addExerciseBtn');
-    addExerciseBtn.addEventListener('click', async function () {
+    document.getElementById('addExerciseBtn').addEventListener('click', async function () {
       const exerciseSelect = document.getElementById('exerciseSelect');
       const selectedExerciseId = exerciseSelect.value;
   
       if (selectedExerciseId) {
-        await addExerciseToTrainingDay(selectedExerciseId);
+        const exercise = exercisesList.find(e => e.id === parseInt(selectedExerciseId));
+        addExerciseToList(exercise);
       }
     });
   
-    // Formularz do zapisu dnia treningowego
+    // Obsługuje kliknięcie przycisku "Zapisz Dzień Treningowy"
     const trainingForm = document.getElementById('trainingForm');
     trainingForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
+      event.preventDefault();  // Zapobiegamy automatycznemu wysyłaniu formularza
   
       const trainingDate = document.getElementById('trainingDate').value;
       const location = document.getElementById('location').value;
   
       // Zbieranie ID ćwiczeń dodanych do dnia treningowego
-      const exerciseIds = selectedExercises.map(exercise => exercise.id);  // Pobieramy ID ćwiczeń
-  
-      console.log('Selected Exercises:', selectedExercises); // Logowanie całej tablicy ćwiczeń
-      console.log('Exercise IDs:', exerciseIds); // Logowanie tablicy z ID ćwiczeń
-  
-      // Sprawdzamy, czy mamy ćwiczenia do zapisania
-      if (exerciseIds.length === 0) {
-        alert('Musisz dodać przynajmniej jedno ćwiczenie do dnia treningowego');
-        return;
-      }
+      const exerciseIds = selectedExercises.map(exercise => exercise.id);
   
       const data = {
         date: trainingDate,
         location: location,
-        exercises: exerciseIds // Wysyłamy tablicę ćwiczeń
+        exercises: exerciseIds
       };
   
       console.log('Sending data to server:', data); // Logowanie danych przed wysłaniem
