@@ -90,21 +90,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const trainingForm = document.getElementById('trainingForm');
     trainingForm.addEventListener('submit', async (event) => {
         event.preventDefault();  // Zapobiegamy automatycznemu wysyłaniu formularza
-
+    
         const trainingDate = document.getElementById('trainingDate').value;
         const location = document.getElementById('location').value;
-
-        // Zbieranie ID ćwiczeń dodanych do dnia treningowego
-        const exerciseIds = selectedExercises.map(exercise => exercise.id);
-
+    
+        // Zbieranie ćwiczeń z selectedExercises, dodajemy wagę
+        const exercisesWithWeights = selectedExercises.map(exercise => {
+            const weightInput = document.querySelector(`.weightInput[data-id="${exercise.id}"]`);
+            const weight = weightInput ? parseFloat(weightInput.value) : null;
+    
+            return {
+                exercise_id: exercise.id,
+                weight: weight
+            };
+        });
+    
         const data = {
             date: trainingDate,
             location: location,
-            exercises: exerciseIds
+            exercises: exercisesWithWeights
         };
-
+    
         console.log('Sending data to server:', data); // Logowanie danych przed wysłaniem
-
+    
         const response = await fetch('http://127.0.0.1:3000/api/training-days', {
             method: 'POST',
             headers: {
@@ -112,11 +120,12 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify(data)
         });
-
+    
         if (response.ok) {
             alert('Dzień treningowy zapisany pomyślnie!');
         } else {
             alert('Błąd przy zapisywaniu dnia treningowego');
         }
     });
+    
 });
