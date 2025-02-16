@@ -33,7 +33,7 @@ async function fetchTrainingDays() {
         
         // Nazwa ćwiczenia i waga z encji asocjacyjnej
         const exerciseText = document.createElement('p');
-        exerciseText.innerHTML = `<span>${exercise.name}</span>: Wykonano z wagą ${exercise.current_weight} kg`;  // Waga z tabeli asocjacyjnej
+        exerciseText.innerHTML = `<span>${exercise.name}</span>: Wykonano z wagą ${exercise.current_training_day_weight ? exercise.current_training_day_weight : 'Brak danych'} kg`; // Waga z encji asocjacyjnej
         exerciseItem.appendChild(exerciseText);
         
         exerciseList.appendChild(exerciseItem);

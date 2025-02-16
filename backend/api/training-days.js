@@ -47,46 +47,78 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Endpoint do pobierania dni treningowych z wagami ćwiczeń
-router.get('/training-days', async (req, res) => {
-  try {
-    const result = await client.query(`
-      SELECT td.id, td.date, td.location, e.id AS exercise_id, e.name, tde.weight
-      FROM training_days td
-      LEFT JOIN training_day_exercises tde ON td.id = tde.training_day_id
-      LEFT JOIN exercises e ON tde.exercise_id = e.id
-      ORDER BY td.date DESC
-    `);
 
-    // Grupa wyników według dnia treningowego
-    const trainingDays = result.rows.reduce((acc, row) => {
-      let day = acc.find(d => d.id === row.id);
+// Endpoint do pobierania wszystkich dni treningowych wraz z ćwiczeniami
+router.get('/', async (req, res) => {
+  try {
+    // Zapytanie SQL, aby pobrać dni treningowe oraz przypisane do nich ćwiczenia
+    const query = `
+      SELECT 
+        td.id AS training_day_id,
+        td.date,
+        td.location,
+        e.id AS exercise_id,
+        e.name AS exercise_name,
+        e.muscle_group,
+        e.current_weight,
+        e.max_weight,
+        e.max_weight_date,
+        e.image_one,
+        e.image_two,
+        tde.weight AS current_training_day_weight -- Dodanie wagi z tabeli asocjacyjnej
+      FROM 
+        training_days td
+      JOIN 
+        training_day_exercises tde ON td.id = tde.training_day_id
+      JOIN 
+        exercises e ON e.id = tde.exercise_id
+      ORDER BY 
+        td.date;
+    `;
+    
+    const result = await client.query(query);
+    const trainingDays = [];
+
+    // Grupowanie wyników po dniach treningowych
+    result.rows.forEach(row => {
+      const day = trainingDays.find(d => d.id === row.training_day_id);
       if (!day) {
-        day = {
-          id: row.id,
+        trainingDays.push({
+          id: row.training_day_id,
           date: row.date,
           location: row.location,
-          exercises: [],
-        };
-        acc.push(day);
-      }
-
-      // Dodaj ćwiczenie do dnia treningowego, w tym wagę z tabeli asocjacyjnej
-      if (row.exercise_id) {
+          exercises: [{
+            id: row.exercise_id,
+            name: row.exercise_name,
+            muscle_group: row.muscle_group,
+            current_weight: row.current_weight,
+            max_weight: row.max_weight,
+            max_weight_date: row.max_weight_date,
+            image_one: row.image_one,
+            image_two: row.image_two,
+            current_training_day_weight: row.current_training_day_weight // Dodanie wagi z tabeli asocjacyjnej
+          }]
+        });
+      } else {
         day.exercises.push({
           id: row.exercise_id,
-          name: row.name,
-          current_weight: row.weight,  // Waga ćwiczenia z tabeli asocjacyjnej
+          name: row.exercise_name,
+          muscle_group: row.muscle_group,
+          current_weight: row.current_weight,
+          max_weight: row.max_weight,
+          max_weight_date: row.max_weight_date,
+          image_one: row.image_one,
+          image_two: row.image_two,
+          current_training_day_weight: row.current_training_day_weight // Dodanie wagi z tabeli asocjacyjnej
         });
       }
+    });
 
-      return acc;
-    }, []);
-
-    res.json(trainingDays);
+    // Zwrócenie grupowanych dni treningowych
+    res.status(200).json(trainingDays);
   } catch (error) {
     console.error('Błąd przy pobieraniu dni treningowych:', error);
-    res.status(500).json({ error: 'Błąd serwera' });
+    res.status(500).json({ error: 'Błąd przy pobieraniu dni treningowych', details: error.message });
   }
 });
 
