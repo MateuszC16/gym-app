@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dodaj Dzień Treningowy</title>
+  <link rel="stylesheet" href="css/addTrainingDay.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Dodaj Dzień Treningowy</h1>
+
+    <form id="trainingForm">
+      <!-- Wybór dnia treningowego -->
+      <label for="trainingDate">Data:</label>
+      <input type="date" id="trainingDate" name="trainingDate" required>
+
+      <!-- Wybór lokalizacji -->
+      <label for="location">Lokalizacja:</label>
+      <input type="text" id="location" name="location" placeholder="Wpisz lokalizację" required>
+
+      <!-- Wybór ćwiczenia -->
+      <div class="exercise-selection">
+        <label for="exerciseSelect">Wybierz ćwiczenie:</label>
+        <select id="exerciseSelect" name="exercise_id" required>
+          <!-- Opcje będą dodane dynamicznie w JS -->
+        </select>
+      </div>
+
+      <!-- Przycisk do dodania nowego ćwiczenia -->
+      <button type="button" id="addNewExerciseBtn">Dodaj nowe ćwiczenie</button>
+
+      <!-- Przyciski formularza -->
+      <button type="submit">Zapisz Dzień Treningowy</button>
+    </form>
+  </div>
+
+  <script src="js/AddTrainingDay.js"></script>
+</body>
+</html>

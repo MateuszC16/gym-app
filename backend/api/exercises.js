@@ -150,4 +150,14 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Endpoint do pobierania ćwiczeń w celu wybrania ich do dnia treningowego
+router.get('/selectable', async (req, res) => {
+  try {
+    const result = await client.query('SELECT id, name FROM exercises');
+    res.json(result.rows); // Zwróci tylko ID i nazwę ćwiczenia
+  } catch (err) {
+    res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczeń do wyboru' });
+  }
+});
+
 export default router;
