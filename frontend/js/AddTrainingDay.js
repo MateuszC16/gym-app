@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
+    let exercisesList = []; // Lista ćwiczeń z bazy danych
+    let selectedExercises = []; // Lista ćwiczeń dodanych do dnia treningowego
+  
     // Funkcja do pobrania ćwiczeń z API
     const fetchExercises = async () => {
       try {
         const response = await fetch('http://127.0.0.1:3000/api/exercises');
-        const exercises = await response.json();
-        populateExerciseSelect(exercises);
+        exercisesList = await response.json();
+        populateExerciseSelect(exercisesList);
       } catch (error) {
         console.error("Błąd przy ładowaniu ćwiczeń:", error);
       }
@@ -21,20 +24,42 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     };
   
+    // Funkcja do dodania ćwiczenia do listy ćwiczeń w formularzu
+    const addExerciseToList = (exercise) => {
+      const exerciseList = document.getElementById('addedExercisesList');
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${exercise.name}</strong><br>
+        Aktualny ciężar: ${exercise.current_weight ? exercise.current_weight + ' kg' : 'Brak danych'}<br>
+        ${exercise.image_one ? `<img src="http://127.0.0.1:3000${exercise.image_one}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
+        ${exercise.image_two ? `<img src="http://127.0.0.1:3000${exercise.image_two}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
+      `;
+      exerciseList.appendChild(li);
+  
+      // Dodaj ćwiczenie do listy dodanych ćwiczeń
+      selectedExercises.push(exercise);  // Zapisujemy całe ćwiczenie w tablicy
+    };
+  
+    // Funkcja do dodawania ćwiczenia do listy na froncie (nie zapisujemy do bazy)
+    const addExerciseToTrainingDay = async (exerciseId) => {
+      const exercise = exercisesList.find(e => e.id === parseInt(exerciseId));
+      if (!exercise) return;  // Jeżeli ćwiczenie nie istnieje, nie dodawaj
+  
+      addExerciseToList(exercise);  // Dodaj ćwiczenie do listy na froncie, ale nie zapisuj jeszcze w bazie danych
+    };
+  
     // Wywołaj fetchExercises, aby pobrać ćwiczenia
     fetchExercises();
   
-    // Przycisk do dodawania nowego ćwiczenia
-    const addNewExerciseBtn = document.getElementById('addNewExerciseBtn');
-    addNewExerciseBtn.addEventListener('click', function () {
-      window.location.href = './addExercise.html'; // Zmienisz ten URL na właściwą stronę do dodawania ćwiczeń
-    });
+    // Obsługuje kliknięcie przycisku do dodawania ćwiczenia
+    const addExerciseBtn = document.getElementById('addExerciseBtn');
+    addExerciseBtn.addEventListener('click', async function () {
+      const exerciseSelect = document.getElementById('exerciseSelect');
+      const selectedExerciseId = exerciseSelect.value;
   
-    // Obsługuje wybranie ćwiczenia z listy
-    const exerciseSelect = document.getElementById('exerciseSelect');
-    exerciseSelect.addEventListener('change', function () {
-      const selectedExerciseId = this.value;
-      console.log(`Wybrane ćwiczenie: ${selectedExerciseId}`);
+      if (selectedExerciseId) {
+        await addExerciseToTrainingDay(selectedExerciseId);
+      }
     });
   
     // Formularz do zapisu dnia treningowego
@@ -44,15 +69,27 @@ document.addEventListener('DOMContentLoaded', function () {
   
       const trainingDate = document.getElementById('trainingDate').value;
       const location = document.getElementById('location').value;
-      const exerciseId = document.getElementById('exerciseSelect').value;
+  
+      // Zbieranie ID ćwiczeń dodanych do dnia treningowego
+      const exerciseIds = selectedExercises.map(exercise => exercise.id);  // Pobieramy ID ćwiczeń
+  
+      console.log('Selected Exercises:', selectedExercises); // Logowanie całej tablicy ćwiczeń
+      console.log('Exercise IDs:', exerciseIds); // Logowanie tablicy z ID ćwiczeń
+  
+      // Sprawdzamy, czy mamy ćwiczenia do zapisania
+      if (exerciseIds.length === 0) {
+        alert('Musisz dodać przynajmniej jedno ćwiczenie do dnia treningowego');
+        return;
+      }
   
       const data = {
         date: trainingDate,
         location: location,
-        exercise_id: exerciseId
+        exercises: exerciseIds // Wysyłamy tablicę ćwiczeń
       };
   
-      // Wysyłamy dane do backendu
+      console.log('Sending data to server:', data); // Logowanie danych przed wysłaniem
+  
       const response = await fetch('http://127.0.0.1:3000/api/training-days', {
         method: 'POST',
         headers: {

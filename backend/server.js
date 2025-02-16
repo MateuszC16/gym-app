@@ -4,7 +4,6 @@ import cors from 'cors';
 import exercisesRouter from './api/exercises.js';
 import trainingDaysRouter from './api/training-days.js';
 
-// Użyj import.meta.url, aby uzyskać katalog
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
 

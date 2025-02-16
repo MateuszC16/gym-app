@@ -19,16 +19,22 @@
       <label for="location">Lokalizacja:</label>
       <input type="text" id="location" name="location" placeholder="Wpisz lokalizację" required>
 
+      <!-- Lista ćwiczeń dodanych do dnia treningowego -->
+      <h3>Dodane ćwiczenia do dnia treningowego:</h3>
+      <ul id="addedExercisesList">
+        <!-- Lista ćwiczeń będzie dodawana tutaj -->
+      </ul>
+
       <!-- Wybór ćwiczenia -->
       <div class="exercise-selection">
         <label for="exerciseSelect">Wybierz ćwiczenie:</label>
         <select id="exerciseSelect" name="exercise_id" required>
-          <!-- Opcje będą dodane dynamicznie w JS -->
+          <option value="">Wybierz ćwiczenie</option>
         </select>
       </div>
 
-      <!-- Przycisk do dodania nowego ćwiczenia -->
-      <button type="button" id="addNewExerciseBtn">Dodaj nowe ćwiczenie</button>
+      <!-- Przycisk do dodania ćwiczenia do treningu -->
+      <button type="button" id="addExerciseBtn">Dodaj do treningu</button>
 
       <!-- Przyciski formularza -->
       <button type="submit">Zapisz Dzień Treningowy</button>
