@@ -20,7 +20,8 @@
         <option value="klatka piersiowa">Klatka piersiowa</option>
         <option value="plecy">Plecy</option>
         <option value="barki">Barki</option>
-        <option value="ramiona">Ramiona</option>
+        <option value="biceps">Biceps</option>  <!-- Zmienione na biceps -->
+        <option value="triceps">Triceps</option>  <!-- Zmienione na triceps -->
         <option value="nogi">Nogi</option>
         <option value="brzuch">Brzuch</option>
         <option value="łydki">Łydki</option>
@@ -29,13 +30,13 @@
       </select>
       
       <label for="current-weight">Aktualny ciężar:</label>
-      <input type="number" id="current-weight" name="current-weight" required>
+      <input type="number" id="current-weight" name="current-weight" step="0.1" required>  <!-- Dodano step 0.1, aby umożliwić liczby zmiennoprzecinkowe -->
 
       <label for="max-weight">Maksymalny ciężar:</label>
-      <input type="number" id="max-weight" name="max-weight" >
+      <input type="number" id="max-weight" name="max-weight" step="0.1">  <!-- Dodano step 0.1, aby umożliwić liczby zmiennoprzecinkowe -->
 
       <label for="max-weight-date">Data osiągniętego maksymalnego ciężaru:</label>
-      <input type="date" id="max-weight-date" name="max-weight-date" >
+      <input type="date" id="max-weight-date" name="max-weight-date">
       
       <label for="images">Zdjęcia (maksymalnie 2):</label>
       <input type="file" id="images" name="images" multiple>

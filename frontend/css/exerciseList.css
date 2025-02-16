@@ -162,7 +162,7 @@ button:active {
 .modal .modal-content {
   background-color: #34495e;
   border-radius: 10px;
-  padding: 20px;
+  padding: 35px;
   max-width: 500px;
   width: 100%;
   color: #ecf0f1;
@@ -258,4 +258,27 @@ button:active {
 
 .modal .modal-close:focus {
   outline: none; /* Usunięcie obramowania przy kliknięciu */
+}
+
+/* Stylizacja select */
+select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background-color: #34495e;
+  color: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+select:hover {
+  background-color: #16a085;
+}
+
+select:focus {
+  outline: none;
+  background-color: #1abc9c;
 }
