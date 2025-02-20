@@ -32,11 +32,11 @@ router.post('/', async (req, res) => {
 
       // Powiązanie ćwiczeń z dniem treningowym w tabeli asocjacyjnej
       for (const exercise of exercises) {
-          const { exercise_id, weight } = exercise;
+          const { exercise_id, weight, description } = exercise; // Pobieramy description
 
           await client.query(
-              'INSERT INTO training_day_exercises(training_day_id, exercise_id, weight) VALUES($1, $2, $3)',
-              [trainingDayId, exercise_id, weight]
+              'INSERT INTO training_day_exercises(training_day_id, exercise_id, weight, description) VALUES($1, $2, $3, $4)',
+              [trainingDayId, exercise_id, weight, description || null] // Dodanie opisu ćwiczenia (lub NULL)
           );
       }
 
@@ -65,7 +65,8 @@ router.get('/', async (req, res) => {
         e.max_weight_date,
         e.image_one,
         e.image_two,
-        tde.weight AS current_training_day_weight -- Dodanie wagi z tabeli asocjacyjnej
+        tde.weight AS current_training_day_weight,
+        tde.description AS training_day_description -- Dodanie opisu z tabeli asocjacyjnej
       FROM 
         training_days td
       JOIN 
@@ -96,7 +97,8 @@ router.get('/', async (req, res) => {
             max_weight_date: row.max_weight_date,
             image_one: row.image_one,
             image_two: row.image_two,
-            current_training_day_weight: row.current_training_day_weight // Dodanie wagi z tabeli asocjacyjnej
+            current_training_day_weight: row.current_training_day_weight,
+            training_day_description: row.training_day_description // Opis ćwiczenia przypisanego do dnia treningowego
           }]
         });
       } else {
@@ -109,7 +111,8 @@ router.get('/', async (req, res) => {
           max_weight_date: row.max_weight_date,
           image_one: row.image_one,
           image_two: row.image_two,
-          current_training_day_weight: row.current_training_day_weight // Dodanie wagi z tabeli asocjacyjnej
+          current_training_day_weight: row.current_training_day_weight,
+          training_day_description: row.training_day_description // Opis ćwiczenia przypisanego do dnia treningowego
         });
       }
     });
@@ -121,6 +124,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Błąd przy pobieraniu dni treningowych', details: error.message });
   }
 });
+
 
 export default router;
 

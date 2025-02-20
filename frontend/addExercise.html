@@ -20,8 +20,8 @@
         <option value="klatka piersiowa">Klatka piersiowa</option>
         <option value="plecy">Plecy</option>
         <option value="barki">Barki</option>
-        <option value="biceps">Biceps</option>  <!-- Zmienione na biceps -->
-        <option value="triceps">Triceps</option>  <!-- Zmienione na triceps -->
+        <option value="biceps">Biceps</option>  
+        <option value="triceps">Triceps</option>  
         <option value="nogi">Nogi</option>
         <option value="brzuch">Brzuch</option>
         <option value="łydki">Łydki</option>
@@ -30,14 +30,17 @@
       </select>
       
       <label for="current-weight">Aktualny ciężar:</label>
-      <input type="number" id="current-weight" name="current-weight" step="0.1" required>  <!-- Dodano step 0.1, aby umożliwić liczby zmiennoprzecinkowe -->
+      <input type="number" id="current-weight" name="current-weight" step="0.1" required>
 
       <label for="max-weight">Maksymalny ciężar:</label>
-      <input type="number" id="max-weight" name="max-weight" step="0.1">  <!-- Dodano step 0.1, aby umożliwić liczby zmiennoprzecinkowe -->
+      <input type="number" id="max-weight" name="max-weight" step="0.1">
 
       <label for="max-weight-date">Data osiągniętego maksymalnego ciężaru:</label>
       <input type="date" id="max-weight-date" name="max-weight-date">
       
+      <label for="description">Opis ćwiczenia:</label>
+      <textarea id="description" name="description" rows="4" cols="50" placeholder="Opcjonalny opis ćwiczenia..."></textarea>
+
       <label for="images">Zdjęcia (maksymalnie 2):</label>
       <input type="file" id="images" name="images" multiple>
       
@@ -45,6 +48,6 @@
     </form>
   </div>
 
-  <script src="js/addExercise.js"></script>  <!-- Skrypt JavaScript do obsługi formularza -->
+  <script src="js/addExercise.js"></script>  
 </body>
 </html>

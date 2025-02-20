@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="exercise-name">${exercise.name}</div>
             <div class="muscle-group">${exercise.muscle_group || 'Brak danych'}</div>
             Aktualny ciężar: <input type="number" value="${exercise.current_weight || ''}" class="weightInput" data-id="${exercise.id}"><br>
+            Opis: <textarea class="descriptionInput" data-id="${exercise.id}" placeholder="Dodaj opis ćwiczenia"></textarea><br>
             ${exercise.image_one ? `<img src="http://127.0.0.1:3000${exercise.image_one}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
             ${exercise.image_two ? `<img src="http://127.0.0.1:3000${exercise.image_two}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
             <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
@@ -94,21 +95,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const trainingDate = document.getElementById('trainingDate').value;
         const location = document.getElementById('location').value;
     
-        // Zbieranie ćwiczeń z selectedExercises, dodajemy wagę
-        const exercisesWithWeights = selectedExercises.map(exercise => {
+        // Zbieranie ćwiczeń z selectedExercises, dodajemy wagę i opis
+        const exercisesWithDetails = selectedExercises.map(exercise => {
             const weightInput = document.querySelector(`.weightInput[data-id="${exercise.id}"]`);
+            const descriptionInput = document.querySelector(`.descriptionInput[data-id="${exercise.id}"]`);
             const weight = weightInput ? parseFloat(weightInput.value) : null;
+            const description = descriptionInput ? descriptionInput.value : null;
     
             return {
                 exercise_id: exercise.id,
-                weight: weight
+                weight: weight,
+                description: description
             };
         });
     
         const data = {
             date: trainingDate,
             location: location,
-            exercises: exercisesWithWeights
+            exercises: exercisesWithDetails
         };
     
         console.log('Sending data to server:', data); // Logowanie danych przed wysłaniem
@@ -127,5 +131,4 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Błąd przy zapisywaniu dnia treningowego');
         }
     });
-    
 });

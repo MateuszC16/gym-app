@@ -44,7 +44,7 @@ client.connect()
 
 // Endpoint do dodawania ćwiczenia
 router.post('/', upload.array('images', 2), async (req, res) => {
-  const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
+  const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate, description } = req.body;
   const images = req.files;
 
   const parsedMaxWeight = (maxWeight === 'null' || maxWeight === '') ? null : parseFloat(maxWeight);
@@ -55,8 +55,8 @@ router.post('/', upload.array('images', 2), async (req, res) => {
 
   try {
     const result = await client.query(
-      'INSERT INTO exercises(name, muscle_group, current_weight, max_weight, max_weight_date, image_one, image_two) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath]
+      'INSERT INTO exercises(name, muscle_group, current_weight, max_weight, max_weight_date, image_one, image_two, description) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, description || null]  // Dodanie opisu ćwiczenia
     );
 
     res.json(result.rows[0]);
@@ -65,6 +65,7 @@ router.post('/', upload.array('images', 2), async (req, res) => {
     res.status(500).json({ error: 'Błąd przy dodawaniu ćwiczenia' });
   }
 });
+
 
 // Endpoint do pobierania ćwiczeń
 router.get('/', async (req, res) => {
@@ -75,6 +76,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczeń z bazy danych' });
   }
 });
+
 
 // Endpoint do pobierania ćwiczenia po ID
 router.get('/:id', async (req, res) => {
@@ -90,9 +92,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+
 // Endpoint do aktualizowania ćwiczenia
 router.put('/:id', upload.array('images', 2), async (req, res) => {
-  const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate } = req.body;
+  const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate, description } = req.body;
   const images = req.files;
 
   const parsedCurrentWeight = currentWeight === '' || currentWeight === null ? null : parseFloat(currentWeight);
@@ -105,8 +108,8 @@ router.put('/:id', upload.array('images', 2), async (req, res) => {
   try {
     const result = await client.query(
       `UPDATE exercises SET name = $1, muscle_group = $2, current_weight = $3, max_weight = $4, max_weight_date = $5, 
-      image_one = COALESCE($6, image_one), image_two = COALESCE($7, image_two) WHERE id = $8 RETURNING *`,
-      [name, muscleGroup, parsedCurrentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, req.params.id]
+      image_one = COALESCE($6, image_one), image_two = COALESCE($7, image_two), description = COALESCE($8, description) WHERE id = $9 RETURNING *`,
+      [name, muscleGroup, parsedCurrentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, description || null, req.params.id]
     );
 
     if (result.rowCount === 0) {
@@ -119,6 +122,7 @@ router.put('/:id', upload.array('images', 2), async (req, res) => {
     res.status(500).json({ error: 'Błąd przy edytowaniu ćwiczenia' });
   }
 });
+
 
 // Endpoint do usuwania ćwiczenia
 router.delete('/:id', async (req, res) => {
