@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('http://127.0.0.1:3000/api/exercises');
             exercisesList = await response.json();
-            populateExerciseSelect(exercisesList);
+            populateExerciseSelect(exercisesList); // Wypełnij select ćwiczeń
         } catch (error) {
             console.error("Błąd przy ładowaniu ćwiczeń:", error);
         }
@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Funkcja do dynamicznego dodawania ćwiczeń do rozwijanej listy
     const populateExerciseSelect = (exercises) => {
         const exerciseSelect = document.getElementById('exerciseSelect');
+        exerciseSelect.innerHTML = '<option value="">Wybierz ćwiczenie</option>'; // Wyczyść opcje
         exercises.forEach(exercise => {
             const option = document.createElement('option');
             option.value = exercise.id; // Używamy ID ćwiczenia jako wartości
@@ -36,11 +37,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const exerciseList = document.getElementById('addedExercisesList');
         const li = document.createElement('li');
         li.classList.add('exercise-item');
+        
+        // Tworzymy pole do wyświetlania istniejącego opisu
+        const descriptionText = exercise.description ? `<p><strong>Opis ćwiczenia:</strong> ${exercise.description}</p>` : '<p><strong>Brak opisu</strong></p>';
+        
         li.innerHTML = `
             <div class="exercise-name">${exercise.name}</div>
             <div class="muscle-group">${exercise.muscle_group || 'Brak danych'}</div>
             Aktualny ciężar: <input type="number" value="${exercise.current_weight || ''}" class="weightInput" data-id="${exercise.id}"><br>
-            Opis: <textarea class="descriptionInput" data-id="${exercise.id}" placeholder="Dodaj opis ćwiczenia"></textarea><br>
+            ${descriptionText}  <!-- Wyświetlamy istniejący opis -->
+            Opis do encji asocjacyjnej: <textarea class="descriptionInput" data-id="${exercise.id}" placeholder="Dodaj opis ćwiczenia"></textarea><br>
             ${exercise.image_one ? `<img src="http://127.0.0.1:3000${exercise.image_one}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
             ${exercise.image_two ? `<img src="http://127.0.0.1:3000${exercise.image_two}" style="width: 100px; height: 100px; margin: 5px;">` : ''}
             <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
@@ -74,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Obsługuje kliknięcie przycisku do dodawania ćwiczenia
+    // Obsługuje kliknięcie przycisku "Dodaj ćwiczenie" do formularza
     document.getElementById('addExerciseBtn').addEventListener('click', async function () {
         const exerciseSelect = document.getElementById('exerciseSelect');
         const selectedExerciseId = parseInt(exerciseSelect.value); // Upewnij się, że selectedExerciseId jest liczbą

@@ -150,3 +150,23 @@ button:hover {
         width: 100%;
     }
 }
+
+/* Stylizacja pola tekstowego (textarea) dla opisu */
+textarea.descriptionInput {
+    width: 100%;  /* Zajmuje pełną szerokość dostępnego kontenera */
+    padding: 10px;  /* Dodajemy padding do wnętrza pola */
+    border: 1px solid #bdc3c7;  /* Obramowanie w kolorze szarości */
+    border-radius: 8px;  /* Zaokrąglone rogi */
+    background-color: #f4f6f7;  /* Jasne tło, pasujące do całej strony */
+    font-size: 1rem;  /* Rozmiar czcionki */
+    font-family: Arial, sans-serif;  /* Użycie czcionki pasującej do strony */
+    resize: vertical;  /* Pozwala na zmianę wysokości (jeśli użytkownik chce) */
+    margin-bottom: 12px;  /* Margines od dołu */
+  }
+  
+  textarea.descriptionInput:focus {
+    border-color: #1abc9c;  /* Zmiana koloru obramowania podczas fokusu */
+    outline: none;  /* Usunięcie domyślnego obramowania przy fokusa */
+    background-color: #ffffff;  /* Zmiana tła na białe podczas fokusa */
+  }
+  
