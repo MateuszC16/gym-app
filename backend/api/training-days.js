@@ -17,41 +17,61 @@ client.connect()
   .catch(err => console.error('Błąd połączenia z bazą:', err));
 
 // Endpoint do tworzenia dnia treningowego
-// Endpoint do tworzenia dnia treningowego
 router.post('/', async (req, res) => {
   const { date, location, exercises } = req.body;
 
   try {
-      // Dodanie dnia treningowego do bazy danych
-      const result = await client.query(
-          'INSERT INTO training_days(date, location) VALUES($1, $2) RETURNING id',
-          [date, location]
+    // Dodanie dnia treningowego do bazy danych
+    const result = await client.query(
+      'INSERT INTO training_days(date, location) VALUES($1, $2) RETURNING id',
+      [date, location]
+    );
+
+    const trainingDayId = result.rows[0].id;
+
+    // Powiązanie ćwiczeń z dniem treningowym w tabeli asocjacyjnej
+    for (const exercise of exercises) {
+      const { exercise_id, weight, description } = exercise;
+
+      // Sprawdzamy, czy waga w tabeli asocjacyjnej jest większa niż maksymalna waga w tabeli exercises
+      const exerciseResult = await client.query(
+        'SELECT current_weight, max_weight FROM exercises WHERE id = $1',
+        [exercise_id]
       );
 
-      const trainingDayId = result.rows[0].id;
+      const currentExercise = exerciseResult.rows[0];
+      const newMaxWeight = currentExercise.max_weight < weight ? weight : currentExercise.max_weight;
 
-      // Powiązanie ćwiczeń z dniem treningowym w tabeli asocjacyjnej
-      for (const exercise of exercises) {
-          const { exercise_id, weight, description } = exercise; // Pobieramy description
-
-          await client.query(
-              'INSERT INTO training_day_exercises(training_day_id, exercise_id, weight, description) VALUES($1, $2, $3, $4)',
-              [trainingDayId, exercise_id, weight, description || null] // Dodanie opisu ćwiczenia (lub NULL)
-          );
+      // Zaktualizowanie max_weight oraz current_weight w tabeli exercises
+      if (currentExercise.max_weight < weight) {
+        await client.query(
+          'UPDATE exercises SET max_weight = $1, max_weight_date = CURRENT_DATE WHERE id = $2',
+          [weight, exercise_id]
+        );
       }
 
-      res.status(200).json({ message: 'Dzień treningowy dodany pomyślnie' });
+      await client.query(
+        'UPDATE exercises SET current_weight = $1 WHERE id = $2',
+        [weight, exercise_id]
+      );
+
+      // Dodanie ćwiczenia do tabeli asocjacyjnej z opisem
+      await client.query(
+        'INSERT INTO training_day_exercises(training_day_id, exercise_id, weight, description) VALUES($1, $2, $3, $4)',
+        [trainingDayId, exercise_id, weight, description || null]
+      );
+    }
+
+    res.status(200).json({ message: 'Dzień treningowy dodany pomyślnie' });
   } catch (error) {
-      console.error('Błąd przy dodawaniu dnia treningowego:', error);
-      res.status(500).json({ error: 'Błąd przy dodawaniu dnia treningowego', details: error.message });
+    console.error('Błąd przy dodawaniu dnia treningowego:', error);
+    res.status(500).json({ error: 'Błąd przy dodawaniu dnia treningowego', details: error.message });
   }
 });
-
 
 // Endpoint do pobierania wszystkich dni treningowych wraz z ćwiczeniami
 router.get('/', async (req, res) => {
   try {
-    // Zapytanie SQL, aby pobrać dni treningowe oraz przypisane do nich ćwiczenia
     const query = `
       SELECT 
         td.id AS training_day_id,
@@ -66,7 +86,7 @@ router.get('/', async (req, res) => {
         e.image_one,
         e.image_two,
         tde.weight AS current_training_day_weight,
-        tde.description AS training_day_description -- Dodanie opisu z tabeli asocjacyjnej
+        tde.description AS training_day_description
       FROM 
         training_days td
       JOIN 
@@ -80,7 +100,6 @@ router.get('/', async (req, res) => {
     const result = await client.query(query);
     const trainingDays = [];
 
-    // Grupowanie wyników po dniach treningowych
     result.rows.forEach(row => {
       const day = trainingDays.find(d => d.id === row.training_day_id);
       if (!day) {
@@ -98,7 +117,7 @@ router.get('/', async (req, res) => {
             image_one: row.image_one,
             image_two: row.image_two,
             current_training_day_weight: row.current_training_day_weight,
-            training_day_description: row.training_day_description // Opis ćwiczenia przypisanego do dnia treningowego
+            training_day_description: row.training_day_description
           }]
         });
       } else {
@@ -112,12 +131,11 @@ router.get('/', async (req, res) => {
           image_one: row.image_one,
           image_two: row.image_two,
           current_training_day_weight: row.current_training_day_weight,
-          training_day_description: row.training_day_description // Opis ćwiczenia przypisanego do dnia treningowego
+          training_day_description: row.training_day_description
         });
       }
     });
 
-    // Zwrócenie grupowanych dni treningowych
     res.status(200).json(trainingDays);
   } catch (error) {
     console.error('Błąd przy pobieraniu dni treningowych:', error);
@@ -125,7 +143,4 @@ router.get('/', async (req, res) => {
   }
 });
 
-
 export default router;
-
-

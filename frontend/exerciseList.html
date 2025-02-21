@@ -10,9 +10,24 @@
   <div class="container">
     <h1>Lista ćwiczeń</h1>
     
-    <div id="exercise-list" class="exercise-list">
-      <!-- Lista ćwiczeń pojawi się tutaj -->
-    </div>
+    <!-- Dodanie select do wyboru grupy mięśniowej -->
+    <label for="muscle-group-select">Wybierz partię mięśniową:</label>
+    <select id="muscle-group-select">
+      <option value="">Wszystkie</option>
+      <option value="klatka piersiowa">Klatka piersiowa</option>
+      <option value="plecy">Plecy</option>
+      <option value="barki">Barki</option>
+      <option value="biceps">Biceps</option>
+      <option value="triceps">Triceps</option>
+      <option value="nogi">Nogi</option>
+      <option value="brzuch">Brzuch</option>
+      <option value="łydki">Łydki</option>
+      <option value="przedramiona">Przedramiona</option>
+      <option value="pośladki">Pośladki</option>
+    </select>
+    
+    <!-- Lista ćwiczeń pojawi się tutaj -->
+    <div id="exercise-list" class="exercise-list"></div>
   </div>
 
   <!-- Załaduj skrypt JavaScript -->
