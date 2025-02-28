@@ -77,6 +77,7 @@ function openEditModal(trainingDay) {
   const modal = document.getElementById('editTrainingDayModal');
   const trainingDateInput = document.getElementById('editTrainingDate');
   const locationInput = document.getElementById('editLocation');
+  const muscleGroupSelect = document.getElementById('editMuscleGroupSelect');
   const exercisesSelect = document.getElementById('editExerciseSelect');
   const addedExercisesList = document.getElementById('editAddedExercisesList');
   
@@ -100,6 +101,48 @@ function openEditModal(trainingDay) {
   // Pokaż modal
   modal.style.display = 'flex'; // Zmiana z 'block' na 'flex' dla wyśrodkowania
 
+  // Pobierz wszystkie ćwiczenia z bazy danych i wypełnij select
+  fetch('http://127.0.0.1:3000/api/exercises')
+    .then(response => response.json())
+    .then(exercises => {
+      exercisesSelect.innerHTML = '<option value="">Wybierz ćwiczenie</option>';
+      exercises.forEach(exercise => {
+        const option = document.createElement('option');
+        option.value = exercise.id;
+        option.textContent = exercise.name;
+        exercisesSelect.appendChild(option);
+      });
+
+      // Wypełnij select partii mięśniowych
+      muscleGroupSelect.innerHTML = `
+        <option value="all">Wszystkie</option>
+        <option value="klatka piersiowa">Klatka piersiowa</option>
+        <option value="plecy">Plecy</option>
+        <option value="barki">Barki</option>
+        <option value="biceps">Biceps</option>  
+        <option value="triceps">Triceps</option>  
+        <option value="nogi">Nogi</option>
+        <option value="brzuch">Brzuch</option>
+        <option value="łydki">Łydki</option>
+        <option value="przedramiona">Przedramiona</option>
+        <option value="pośladki">Pośladki</option>
+      `;
+
+      // Obsługa zmiany partii mięśniowej
+      muscleGroupSelect.addEventListener('change', () => {
+        const selectedGroup = muscleGroupSelect.value;
+        exercisesSelect.innerHTML = '<option value="">Wybierz ćwiczenie</option>';
+        exercises
+          .filter(ex => selectedGroup === 'all' || ex.muscle_group === selectedGroup)
+          .forEach(exercise => {
+            const option = document.createElement('option');
+            option.value = exercise.id;
+            option.textContent = exercise.name;
+            exercisesSelect.appendChild(option);
+          });
+      });
+    });
+
   // Obsługa zapisu zmian
   document.getElementById('saveEditedTrainingDayBtn').addEventListener('click', async () => {
     const updatedExercises = Array.from(addedExercisesList.children).map(li => {
@@ -109,10 +152,16 @@ function openEditModal(trainingDay) {
       return { exercise_id: exerciseId, weight, description };
     });
 
+    const newExercises = updatedExercises.filter(ex => !trainingDay.exercises.some(te => te.id === ex.exercise_id));
+    const removedExercises = trainingDay.exercises.filter(te => !updatedExercises.some(ex => ex.exercise_id === te.id));
+    const modifiedExercises = updatedExercises.filter(ex => trainingDay.exercises.some(te => te.id === ex.exercise_id && (te.current_training_day_weight !== ex.weight || te.training_day_description !== ex.description)));
+
     const updatedTrainingDay = {
       date: trainingDateInput.value,
       location: locationInput.value,
-      exercises: updatedExercises
+      newExercises,
+      removedExercises,
+      modifiedExercises
     };
 
     const response = await fetch(`http://127.0.0.1:3000/api/training-days/${trainingDay.id}`, {
@@ -148,18 +197,28 @@ function openEditModal(trainingDay) {
   document.getElementById('addNewExerciseBtn').addEventListener('click', async () => {
     const selectedExerciseId = parseInt(exercisesSelect.value);
     if (selectedExerciseId) {
+      // Sprawdź, czy ćwiczenie już istnieje w liście
+      const isExerciseAlreadyAdded = Array.from(addedExercisesList.children).some(li => {
+        return parseInt(li.querySelector('.editWeightInput').getAttribute('data-id')) === selectedExerciseId;
+      });
+
+      if (isExerciseAlreadyAdded) {
+        alert('To ćwiczenie zostało już dodane!');
+        return; // Nie dodawaj ponownie
+      }
+
       const response = await fetch(`http://127.0.0.1:3000/api/exercises/${selectedExerciseId}`);
       const exercise = await response.json();
       trainingDay.exercises.push({
         id: exercise.id,
         name: exercise.name,
         muscle_group: exercise.muscle_group,
-        current_training_day_weight: 0,
+        current_training_day_weight: exercise.current_weight || 0,
         training_day_description: ''
       });
       const li = document.createElement('li');
       li.innerHTML = `
-        ${exercise.name} - Waga: <input type="number" value="0" class="editWeightInput" data-id="${exercise.id}">
+        ${exercise.name} - Waga: <input type="number" value="${exercise.current_weight || 0}" class="editWeightInput" data-id="${exercise.id}">
         Opis: <textarea class="editDescriptionInput" data-id="${exercise.id}"></textarea>
         <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
       `;

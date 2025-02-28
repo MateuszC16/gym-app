@@ -22,8 +22,23 @@
       <input type="date" id="editTrainingDate" required>
       <label for="editLocation">Miejsce:</label>
       <input type="text" id="editLocation" required>
+      <label for="editMuscleGroupSelect">Partia mięśniowa:</label>
+      <select id="editMuscleGroupSelect">
+        <option value="all">Wszystkie</option>
+        <option value="klatka piersiowa">Klatka piersiowa</option>
+        <option value="plecy">Plecy</option>
+        <option value="barki">Barki</option>
+        <option value="biceps">Biceps</option>  
+        <option value="triceps">Triceps</option>  
+        <option value="nogi">Nogi</option>
+        <option value="brzuch">Brzuch</option>
+        <option value="łydki">Łydki</option>
+        <option value="przedramiona">Przedramiona</option>
+        <option value="pośladki">Pośladki</option>
+      </select>
       <label for="editExerciseSelect">Ćwiczenia:</label>
       <select id="editExerciseSelect"></select>
+      <button type="button" id="addNewExerciseBtn">Dodaj ćwiczenie</button>
       <ul id="editAddedExercisesList"></ul>
       <button type="button" id="saveEditedTrainingDayBtn">Zapisz</button>
       <button type="button" id="cancelEditTrainingDayBtn">Anuluj</button>
