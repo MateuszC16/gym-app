@@ -102,6 +102,7 @@ h1 {
   justify-content: center;
   align-items: center;
   z-index: 1000; /* Zapewnia, że modal jest nad innymi elementami */
+  overflow-y: auto; /* Pozwala na przewijanie, gdy modal jest zbyt wysoki */
 }
 
 /* Tło formularza w modalu */
@@ -112,6 +113,11 @@ h1 {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   max-width: 600px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 90vh; /* Maksymalna wysokość modala */
+  overflow-y: auto; /* Pozwala na przewijanie zawartości modala */
 }
 
 /* Pola formularza w modalu */
@@ -127,8 +133,8 @@ h1 {
 
 /* Przycisk zapisu */
 #editTrainingDayForm button {
-  background-color: #2ecc71; /* Zielony przycisk */
-  color: white;
+  background-color: #16a085; /* Zielony przycisk */
+  color: #2c3e50; /* Ciemny kolor tekstu */
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -146,6 +152,40 @@ h1 {
   list-style-type: none;
   padding-left: 0;
   margin-top: 20px;
+}
+
+#editAddedExercisesList li {
+  background-color: #16a085;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+#editAddedExercisesList li input, #editAddedExercisesList li textarea {
+  width: calc(100% - 20px); /* Dopasowanie szerokości do kontenera */
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #2c3e50;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+}
+
+#editAddedExercisesList li button {
+  margin-top: 10px;
+  align-self: flex-end;
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+#editAddedExercisesList li button:hover {
+  background-color: #c0392b;
 }
 
 /* Mniejsze urządzenia (np. telefony) */

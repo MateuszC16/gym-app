@@ -89,7 +89,11 @@ function openEditModal(trainingDay) {
   
   trainingDay.exercises.forEach(exercise => {
     const li = document.createElement('li');
-    li.textContent = `${exercise.name} - Waga: ${exercise.current_training_day_weight} kg`;
+    li.innerHTML = `
+      ${exercise.name} - Waga: <input type="number" value="${exercise.current_training_day_weight}" class="editWeightInput" data-id="${exercise.id}">
+      Opis: <textarea class="editDescriptionInput" data-id="${exercise.id}">${exercise.training_day_description}</textarea>
+      <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
+    `;
     addedExercisesList.appendChild(li);
   });
 
@@ -98,10 +102,17 @@ function openEditModal(trainingDay) {
 
   // Obsługa zapisu zmian
   document.getElementById('saveEditedTrainingDayBtn').addEventListener('click', async () => {
+    const updatedExercises = Array.from(addedExercisesList.children).map(li => {
+      const exerciseId = parseInt(li.querySelector('.editWeightInput').getAttribute('data-id'));
+      const weight = parseFloat(li.querySelector('.editWeightInput').value);
+      const description = li.querySelector('.editDescriptionInput').value;
+      return { exercise_id: exerciseId, weight, description };
+    });
+
     const updatedTrainingDay = {
       date: trainingDateInput.value,
       location: locationInput.value,
-      exercises: trainingDay.exercises // Możesz zaktualizować ćwiczenia według potrzeb
+      exercises: updatedExercises
     };
 
     const response = await fetch(`http://127.0.0.1:3000/api/training-days/${trainingDay.id}`, {
@@ -122,8 +133,40 @@ function openEditModal(trainingDay) {
   document.getElementById('cancelEditTrainingDayBtn').addEventListener('click', () => {
     modal.style.display = 'none'; // Zamknij modal
   });
-}
 
+  // Obsługa usuwania ćwiczenia
+  addedExercisesList.addEventListener('click', (e) => {
+    if (e.target && e.target.classList.contains('removeExerciseBtn')) {
+      const exerciseId = parseInt(e.target.getAttribute('data-id'));
+      const li = e.target.closest('li');
+      li.remove(); // Usuń ćwiczenie z listy w modalu
+      trainingDay.exercises = trainingDay.exercises.filter(ex => ex.id !== exerciseId); // Usuń ćwiczenie z obiektu trainingDay
+    }
+  });
+
+  // Obsługa dodawania nowego ćwiczenia
+  document.getElementById('addNewExerciseBtn').addEventListener('click', async () => {
+    const selectedExerciseId = parseInt(exercisesSelect.value);
+    if (selectedExerciseId) {
+      const response = await fetch(`http://127.0.0.1:3000/api/exercises/${selectedExerciseId}`);
+      const exercise = await response.json();
+      trainingDay.exercises.push({
+        id: exercise.id,
+        name: exercise.name,
+        muscle_group: exercise.muscle_group,
+        current_training_day_weight: 0,
+        training_day_description: ''
+      });
+      const li = document.createElement('li');
+      li.innerHTML = `
+        ${exercise.name} - Waga: <input type="number" value="0" class="editWeightInput" data-id="${exercise.id}">
+        Opis: <textarea class="editDescriptionInput" data-id="${exercise.id}"></textarea>
+        <button class="removeExerciseBtn" data-id="${exercise.id}">Usuń</button>
+      `;
+      addedExercisesList.appendChild(li);
+    }
+  });
+}
 
 // Funkcja do usuwania dnia treningowego
 async function deleteTrainingDay(trainingDayId) {
