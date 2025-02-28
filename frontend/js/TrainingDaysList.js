@@ -73,7 +73,6 @@ async function fetchTrainingDays() {
   }
 }
 
-// Funkcja do otwierania modala i wypełniania go danymi do edycji
 function openEditModal(trainingDay) {
   const modal = document.getElementById('editTrainingDayModal');
   const trainingDateInput = document.getElementById('editTrainingDate');
@@ -95,7 +94,7 @@ function openEditModal(trainingDay) {
   });
 
   // Pokaż modal
-  modal.style.display = 'block';
+  modal.style.display = 'flex'; // Zmiana z 'block' na 'flex' dla wyśrodkowania
 
   // Obsługa zapisu zmian
   document.getElementById('saveEditedTrainingDayBtn').addEventListener('click', async () => {
@@ -124,6 +123,7 @@ function openEditModal(trainingDay) {
     modal.style.display = 'none'; // Zamknij modal
   });
 }
+
 
 // Funkcja do usuwania dnia treningowego
 async function deleteTrainingDay(trainingDayId) {

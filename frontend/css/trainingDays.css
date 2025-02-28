@@ -7,6 +7,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: 0;
+  overflow: hidden; /* Zapobiega przewijaniu, gdy modal jest wyświetlony */
 }
 
 /* Styl dla kontenera */
@@ -88,7 +90,65 @@ h1 {
   background-color: #c0392b;
 }
 
-/* Responsywność */
+/* Modal */
+#editTrainingDayModal {
+  display: none; /* Początkowo modal jest ukryty */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Mroczne tło z przezroczystością */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Zapewnia, że modal jest nad innymi elementami */
+}
+
+/* Tło formularza w modalu */
+#editTrainingDayForm {
+  background-color: #34495e; /* Ciemniejsze tło, dopasowane do reszty */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Pola formularza w modalu */
+#editTrainingDayForm input, #editTrainingDayForm select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #16a085; /* Zielonkawy kolor */
+  background-color: #2c3e50; /* Ciemne tło dla pól */
+  color: #ecf0f1; /* Jasny tekst */
+}
+
+/* Przycisk zapisu */
+#editTrainingDayForm button {
+  background-color: #2ecc71; /* Zielony przycisk */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s;
+}
+
+#editTrainingDayForm button:hover {
+  background-color: #27ae60; /* Ciemniejszy zielony */
+}
+
+/* Lista dodanych ćwiczeń */
+#editAddedExercisesList {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 20px;
+}
+
+/* Mniejsze urządzenia (np. telefony) */
 @media (max-width: 768px) {
   body {
     font-size: 14px;
