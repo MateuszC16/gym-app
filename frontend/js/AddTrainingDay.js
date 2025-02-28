@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let exercisesList = []; // Lista ćwiczeń z bazy danych
     let selectedExercises = []; // Lista ćwiczeń dodanych do dnia treningowego
 
+    // Ustawienie domyślnej daty na aktualną datę
+    const trainingDateInput = document.getElementById('trainingDate');
+    const today = new Date().toISOString().split('T')[0];
+    trainingDateInput.value = today;
+
     // Funkcja do pobrania ćwiczeń z API
     const fetchExercises = async () => {
         try {
@@ -23,6 +28,16 @@ document.addEventListener('DOMContentLoaded', function () {
             option.textContent = exercise.name; // Nazwa ćwiczenia w opcji
             exerciseSelect.appendChild(option);
         });
+    };
+
+    // Funkcja do filtrowania ćwiczeń według partii mięśniowej
+    const filterExercisesByMuscleGroup = (muscleGroup) => {
+        if (muscleGroup === 'wszystkie' || muscleGroup === '') {
+            populateExerciseSelect(exercisesList);
+        } else {
+            const filteredExercises = exercisesList.filter(exercise => exercise.muscle_group === muscleGroup);
+            populateExerciseSelect(filteredExercises);
+        }
     };
 
     // Funkcja do dodania ćwiczenia do listy ćwiczeń w formularzu
@@ -91,6 +106,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 addExerciseToList(exercise);
             }
         }
+    });
+
+    // Obsługuje zmianę partii mięśniowej
+    document.getElementById('muscleGroupSelect').addEventListener('change', function () {
+        const selectedMuscleGroup = this.value;
+        filterExercisesByMuscleGroup(selectedMuscleGroup);
     });
 
     // Obsługuje kliknięcie przycisku "Zapisz Dzień Treningowy"

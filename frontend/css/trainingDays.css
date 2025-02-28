@@ -122,8 +122,8 @@ h1 {
 
 /* Pola formularza w modalu */
 #editTrainingDayForm input, #editTrainingDayForm select {
-  width: 100%;
-  padding: 10px;
+  width: 100%; /* Dopasowanie szerokości do kontenera */
+  padding: 8px;
   margin: 10px 0;
   border-radius: 5px;
   border: 1px solid #16a085; /* Zielonkawy kolor */
