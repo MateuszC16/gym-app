@@ -20,6 +20,8 @@ body {
   background-color: #34495e;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  overflow-y: auto; /* Pozwala na przewijanie w pionie */
+  max-height: 90vh; /* Maksymalna wysokość kontenera */
 }
 
 /* Nagłówek */
@@ -186,6 +188,28 @@ h1 {
 
 #editAddedExercisesList li button:hover {
   background-color: #c0392b;
+}
+
+/* Stylizacja przycisku powrotu */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.back-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-3px);
+}
+
+.back-button:active {
+  background-color: #e74c3c;
 }
 
 /* Mniejsze urządzenia (np. telefony) */

@@ -112,3 +112,25 @@ textarea.descriptionInput:focus {
   outline: none;  /* Usunięcie domyślnego obramowania przy fokusa */
   background-color: #ffffff;  /* Zmiana tła na białe podczas fokusa */
 }
+
+/* Stylizacja przycisku powrotu */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.back-button:hover {
+  background-color: #c0392b;
+  transform: translateY(-3px);
+}
+
+.back-button:active {
+  background-color: #e74c3c;
+}
