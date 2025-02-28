@@ -143,4 +143,54 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Endpoint do edytowania dnia treningowego
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { date, location, exercises } = req.body;
+
+  try {
+    // Zaktualizowanie dnia treningowego
+    await client.query(
+      'UPDATE training_days SET date = $1, location = $2 WHERE id = $3',
+      [date, location, id]
+    );
+
+    // Usunięcie powiązanych ćwiczeń
+    await client.query('DELETE FROM training_day_exercises WHERE training_day_id = $1', [id]);
+
+    // Dodanie nowych ćwiczeń
+    for (const exercise of exercises) {
+      const { exercise_id, weight, description } = exercise;
+      await client.query(
+        'INSERT INTO training_day_exercises(training_day_id, exercise_id, weight, description) VALUES($1, $2, $3, $4)',
+        [id, exercise_id, weight, description || null]
+      );
+    }
+
+    res.status(200).json({ message: 'Dzień treningowy zaktualizowany pomyślnie' });
+  } catch (error) {
+    console.error('Błąd przy edytowaniu dnia treningowego:', error);
+    res.status(500).json({ error: 'Błąd przy edytowaniu dnia treningowego', details: error.message });
+  }
+});
+
+// Endpoint do usuwania dnia treningowego
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Usunięcie powiązanych ćwiczeń
+    await client.query('DELETE FROM training_day_exercises WHERE training_day_id = $1', [id]);
+
+    // Usunięcie dnia treningowego
+    await client.query('DELETE FROM training_days WHERE id = $1', [id]);
+
+    res.status(200).json({ message: 'Dzień treningowy usunięty pomyślnie' });
+  } catch (error) {
+    console.error('Błąd przy usuwaniu dnia treningowego:', error);
+    res.status(500).json({ error: 'Błąd przy usuwaniu dnia treningowego', details: error.message });
+  }
+});
+
+
 export default router;

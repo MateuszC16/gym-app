@@ -15,6 +15,21 @@
     </div>
   </div>
 
+  <!-- Modal do edycji dnia treningowego -->
+  <div id="editTrainingDayModal" style="display:none;">
+    <form id="editTrainingDayForm">
+      <label for="editTrainingDate">Data:</label>
+      <input type="date" id="editTrainingDate" required>
+      <label for="editLocation">Miejsce:</label>
+      <input type="text" id="editLocation" required>
+      <label for="editExerciseSelect">Ćwiczenia:</label>
+      <select id="editExerciseSelect"></select>
+      <ul id="editAddedExercisesList"></ul>
+      <button type="button" id="saveEditedTrainingDayBtn">Zapisz</button>
+      <button type="button" id="cancelEditTrainingDayBtn">Anuluj</button>
+    </form>
+  </div>
+
   <script src="js/TrainingDaysList.js"></script>
 </body>
 </html>
