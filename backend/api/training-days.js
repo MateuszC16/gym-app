@@ -21,6 +21,9 @@ router.post('/', async (req, res) => {
   const { date, location, exercises } = req.body;
 
   try {
+    // Logowanie danych wejściowych
+    console.log('Received data for creating training day:', { date, location, exercises });
+
     // Dodanie dnia treningowego do bazy danych
     const result = await client.query(
       'INSERT INTO training_days(date, location) VALUES($1, $2) RETURNING id',
@@ -149,6 +152,9 @@ router.put('/:id', async (req, res) => {
   const { date, location, exercises } = req.body;
 
   try {
+    // Logowanie danych wejściowych
+    console.log('Received data for updating training day:', { id, date, location, exercises });
+
     // Zaktualizowanie dnia treningowego
     await client.query(
       'UPDATE training_days SET date = $1, location = $2 WHERE id = $3',
@@ -161,6 +167,10 @@ router.put('/:id', async (req, res) => {
       [id]
     );
     const existingExercises = existingExercisesResult.rows.map(row => row.exercise_id);
+
+    // Logowanie typu i zawartości exercises
+    console.log('Type of exercises:', typeof exercises);
+    console.log('Content of exercises:', exercises);
 
     // Upewnij się, że exercises jest tablicą
     if (!Array.isArray(exercises)) {

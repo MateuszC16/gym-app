@@ -82,7 +82,7 @@ function openEditModal(trainingDay) {
   const addedExercisesList = document.getElementById('editAddedExercisesList');
   
   // Wypełnij pola w formularzu edycji
-  trainingDateInput.value = trainingDay.date;
+  trainingDateInput.value = new Date(trainingDay.date).toISOString().split('T')[0]; // Ustaw datę na poprzednią wartość
   locationInput.value = trainingDay.location;
   
   // Wyczyść listę ćwiczeń w modalu
@@ -152,17 +152,13 @@ function openEditModal(trainingDay) {
       return { exercise_id: exerciseId, weight, description };
     });
 
-    const newExercises = updatedExercises.filter(ex => !trainingDay.exercises.some(te => te.id === ex.exercise_id));
-    const removedExercises = trainingDay.exercises.filter(te => !updatedExercises.some(ex => ex.exercise_id === te.id));
-    const modifiedExercises = updatedExercises.filter(ex => trainingDay.exercises.some(te => te.id === ex.exercise_id && (te.current_training_day_weight !== ex.weight || te.training_day_description !== ex.description)));
-
     const updatedTrainingDay = {
       date: trainingDateInput.value,
       location: locationInput.value,
-      newExercises,
-      removedExercises,
-      modifiedExercises
+      exercises: updatedExercises // Ensure exercises array is correctly passed
     };
+
+    console.log('Sending updated training day data:', updatedTrainingDay); // Logowanie danych przed wysłaniem
 
     const response = await fetch(`http://127.0.0.1:3000/api/training-days/${trainingDay.id}`, {
       method: 'PUT',
