@@ -41,6 +41,7 @@ class ExerciseList {
 
         card.innerHTML = `
           <h2>${exercise.name}</h2>
+          ${exercise.description ? `<p><strong>Opis: </strong>${exercise.description}</p>` : ''}
           <p><strong>Partia mięśniowa:</strong> ${exercise.muscle_group}</p>
           <p><strong>Aktualny ciężar:</strong> <strong>${exercise.current_weight} kg</strong></p>
           <p><strong>Maksymalny ciężar:</strong> <strong>${exercise.max_weight ? exercise.max_weight + ' kg' : 'Brak'}</strong></p>
@@ -142,6 +143,9 @@ class ExerciseList {
         <label for="maxWeightDate">Data osiągnięcia maksymalnego ciężaru</label>
         <input type="date" id="maxWeightDate" value="${exercise.max_weight_date ? new Date(exercise.max_weight_date).toLocaleDateString('en-CA') : ''}">
         
+        <label for="description">Opis ćwiczenia</label>
+        <textarea id="description">${exercise.description || ''}</textarea>
+        
         <label for="imageOne">Zdjęcie 1</label>
         <input type="file" id="imageOne">
         <p>${imageOneInfo}</p>
@@ -159,6 +163,7 @@ class ExerciseList {
     document.getElementById('saveButton').addEventListener('click', async () => {
       const updatedExercise = new FormData();
       updatedExercise.append('name', document.getElementById('name').value);
+      updatedExercise.append('description', document.getElementById('description').value);
       updatedExercise.append('muscleGroup', document.getElementById('muscleGroup').value);  // Ustawienie wartości wybranej w formularzu
       updatedExercise.append('currentWeight', document.getElementById('currentWeight').value);
       updatedExercise.append('maxWeight', document.getElementById('maxWeight').value);
