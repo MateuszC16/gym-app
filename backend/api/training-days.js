@@ -92,9 +92,9 @@ router.get('/', async (req, res) => {
         tde.description AS training_day_description
       FROM 
         training_days td
-      JOIN 
+      LEFT JOIN 
         training_day_exercises tde ON td.id = tde.training_day_id
-      JOIN 
+      LEFT JOIN 
         exercises e ON e.id = tde.exercise_id
       ORDER BY 
         td.date;
@@ -110,7 +110,7 @@ router.get('/', async (req, res) => {
           id: row.training_day_id,
           date: row.date,
           location: row.location,
-          exercises: [{
+          exercises: row.exercise_id ? [{
             id: row.exercise_id,
             name: row.exercise_name,
             muscle_group: row.muscle_group,
@@ -121,9 +121,9 @@ router.get('/', async (req, res) => {
             image_two: row.image_two,
             current_training_day_weight: row.current_training_day_weight,
             training_day_description: row.training_day_description
-          }]
+          }] : []
         });
-      } else {
+      } else if (row.exercise_id) {
         day.exercises.push({
           id: row.exercise_id,
           name: row.exercise_name,
