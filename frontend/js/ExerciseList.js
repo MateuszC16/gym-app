@@ -8,7 +8,7 @@ class ExerciseList {
   async renderExercises(muscleGroup = '') {
     try {
       // Zmiana: Dodanie filtrowania po partii mięśniowej
-      const url = muscleGroup ? `https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises?muscle_group=${muscleGroup}` : 'http://localhost:3000/api/exercises';
+      const url = muscleGroup ? `https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises?muscle_group=${muscleGroup}` : 'https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises';
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -31,10 +31,10 @@ class ExerciseList {
 
         let imagesHtml = '';
         if (exercise.image_one) {
-          imagesHtml += `<img src="http://localhost:3000${exercise.image_one}" class="exercise-image" /> `;
+          imagesHtml += `<img src="https://8djtl3nv-3000.euw.devtunnels.ms${exercise.image_one}" class="exercise-image" /> `;
         }
         if (exercise.image_two) {
-          imagesHtml += `<img src="http://localhost:3000${exercise.image_two}" class="exercise-image" /> `;
+          imagesHtml += `<img src="https://8djtl3nv-3000.euw.devtunnels.ms${exercise.image_two}" class="exercise-image" /> `;
         }
 
         const maxWeightDate = exercise.max_weight_date ? new Date(exercise.max_weight_date).toLocaleDateString() : 'Brak daty';
@@ -111,8 +111,8 @@ class ExerciseList {
     const modal = document.createElement('div');
     modal.classList.add('modal');
 
-    const imageOneInfo = exercise.image_one ? `Dodane zdjęcie 1: <a href="http://localhost:3000${exercise.image_one}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 1';
-    const imageTwoInfo = exercise.image_two ? `Dodane zdjęcie 2: <a href="http://localhost:3000${exercise.image_two}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 2';
+    const imageOneInfo = exercise.image_one ? `Dodane zdjęcie 1: <a href="https://8djtl3nv-3000.euw.devtunnels.ms${exercise.image_one}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 1';
+    const imageTwoInfo = exercise.image_two ? `Dodane zdjęcie 2: <a href="https://8djtl3nv-3000.euw.devtunnels.ms${exercise.image_two}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 2';
 
     modal.innerHTML = `
       <div class="modal-content">

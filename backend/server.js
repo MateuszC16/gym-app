@@ -22,6 +22,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/exercises', exercisesRouter);
 app.use('/api/training-days', trainingDaysRouter);
 
+app.get('/', (req, res) => {
+  res.send('Serwer działa!');
+})
+
 // Nasłuchiwanie na porcie 3000
 app.listen(3000, () => {
   console.log('Serwer działa na porcie 3000');
