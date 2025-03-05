@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Funkcja do pobrania ćwiczeń z API
     const fetchExercises = async () => {
         try {
-            const response = await fetch('https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises');
+            const response = await fetch(window.SERVER_URL+'api/exercises');
             exercisesList = await response.json();
             populateExerciseSelect(exercisesList); // Wypełnij select ćwiczeń
         } catch (error) {
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         console.log('Sending data to server:', data); // Logowanie danych przed wysłaniem
     
-        const response = await fetch('https://8djtl3nv-3000.euw.devtunnels.ms/api/training-days', {
+        const response = await fetch(window.SERVER_URL+'api/training-days', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

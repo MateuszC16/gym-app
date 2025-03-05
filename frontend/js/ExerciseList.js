@@ -8,7 +8,7 @@ class ExerciseList {
   async renderExercises(muscleGroup = '') {
     try {
       // Zmiana: Dodanie filtrowania po partii mięśniowej
-      const url = muscleGroup ? `https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises?muscle_group=${muscleGroup}` : 'https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises';
+      const url = muscleGroup ? `${window.SERVER_URL}api/exercises?muscle_group=${muscleGroup}` : window.SERVER_URL+'api/exercises';
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -105,14 +105,14 @@ class ExerciseList {
 
   // Funkcja do edytowania ćwiczenia
   async editExercise(id) {
-    const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${id}`);
+    const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`);
     const exercise = await response.json();
 
     const modal = document.createElement('div');
     modal.classList.add('modal');
 
-    const imageOneInfo = exercise.image_one ? `Dodane zdjęcie 1: <a href="https://8djtl3nv-3000.euw.devtunnels.ms${exercise.image_one}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 1';
-    const imageTwoInfo = exercise.image_two ? `Dodane zdjęcie 2: <a href="https://8djtl3nv-3000.euw.devtunnels.ms${exercise.image_two}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 2';
+    const imageOneInfo = exercise.image_one ? `Dodane zdjęcie 1: <a href="${window.SERVER_URL}${exercise.image_one}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 1';
+    const imageTwoInfo = exercise.image_two ? `Dodane zdjęcie 2: <a href="${window.SERVER_URL}${exercise.image_two}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 2';
 
     modal.innerHTML = `
       <div class="modal-content">
@@ -184,7 +184,7 @@ class ExerciseList {
         updatedExercise.append('imageTwo', exercise.image_two || '');
       }
 
-      const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${id}`, {
+      const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`, {
         method: 'PUT',
         body: updatedExercise
       });
@@ -207,7 +207,7 @@ class ExerciseList {
   // Funkcja do usuwania ćwiczenia
   async deleteExercise(id) {
     if (confirm('Czy na pewno chcesz usunąć to ćwiczenie?')) {
-      const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${id}`, {
+      const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`, {
         method: 'DELETE'
       });
 
