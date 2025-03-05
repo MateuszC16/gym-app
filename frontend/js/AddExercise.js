@@ -33,7 +33,7 @@ document.getElementById('exercise-form').addEventListener('submit', async functi
 
   // Wysyłamy dane do backendu
   try {
-    const response = await fetch('http://localhost:3000/api/exercises', {
+    const response = await fetch('https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises', {
       method: 'POST',
       body: formData
     });

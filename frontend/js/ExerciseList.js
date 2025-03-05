@@ -8,7 +8,7 @@ class ExerciseList {
   async renderExercises(muscleGroup = '') {
     try {
       // Zmiana: Dodanie filtrowania po partii mięśniowej
-      const url = muscleGroup ? `http://localhost:3000/api/exercises?muscle_group=${muscleGroup}` : 'http://localhost:3000/api/exercises';
+      const url = muscleGroup ? `https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises?muscle_group=${muscleGroup}` : 'http://localhost:3000/api/exercises';
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -105,7 +105,7 @@ class ExerciseList {
 
   // Funkcja do edytowania ćwiczenia
   async editExercise(id) {
-    const response = await fetch(`http://localhost:3000/api/exercises/${id}`);
+    const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${id}`);
     const exercise = await response.json();
 
     const modal = document.createElement('div');
@@ -184,7 +184,7 @@ class ExerciseList {
         updatedExercise.append('imageTwo', exercise.image_two || '');
       }
 
-      const response = await fetch(`http://localhost:3000/api/exercises/${id}`, {
+      const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${id}`, {
         method: 'PUT',
         body: updatedExercise
       });
@@ -207,7 +207,7 @@ class ExerciseList {
   // Funkcja do usuwania ćwiczenia
   async deleteExercise(id) {
     if (confirm('Czy na pewno chcesz usunąć to ćwiczenie?')) {
-      const response = await fetch(`http://localhost:3000/api/exercises/${id}`, {
+      const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${id}`, {
         method: 'DELETE'
       });
 

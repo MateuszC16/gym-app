@@ -1,6 +1,6 @@
 async function fetchTrainingDays() {
   try {
-    const response = await fetch('http://127.0.0.1:3000/api/training-days');
+    const response = await fetch('https://8djtl3nv-3000.euw.devtunnels.ms/api/training-days');
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -108,7 +108,7 @@ function openEditModal(trainingDay) {
   modal.style.display = 'flex'; // Zmiana z 'block' na 'flex' dla wyśrodkowania
 
   // Pobierz wszystkie ćwiczenia z bazy danych i wypełnij select
-  fetch('http://127.0.0.1:3000/api/exercises')
+  fetch('https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises')
     .then(response => response.json())
     .then(exercises => {
       exercisesSelect.innerHTML = '<option value="">Wybierz ćwiczenie</option>';
@@ -166,7 +166,7 @@ function openEditModal(trainingDay) {
 
     console.log('Sending updated training day data:', updatedTrainingDay); // Logowanie danych przed wysłaniem
 
-    const response = await fetch(`http://127.0.0.1:3000/api/training-days/${trainingDay.id}`, {
+    const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/training-days/${trainingDay.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedTrainingDay)
@@ -209,7 +209,7 @@ function openEditModal(trainingDay) {
         return; // Nie dodawaj ponownie
       }
 
-      const response = await fetch(`http://127.0.0.1:3000/api/exercises/${selectedExerciseId}`);
+      const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/exercises/${selectedExerciseId}`);
       const exercise = await response.json();
       trainingDay.exercises.push({
         id: exercise.id,
@@ -231,7 +231,7 @@ function openEditModal(trainingDay) {
 
 // Funkcja do usuwania dnia treningowego
 async function deleteTrainingDay(trainingDayId) {
-  const response = await fetch(`http://127.0.0.1:3000/api/training-days/${trainingDayId}`, {
+  const response = await fetch(`https://8djtl3nv-3000.euw.devtunnels.ms/api/training-days/${trainingDayId}`, {
     method: 'DELETE'
   });
 
