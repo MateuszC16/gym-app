@@ -17,6 +17,52 @@ body {
   position: relative;
 }
 
+.container {
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #34495e; /* Ciemniejsze tło dla kontenera */
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #ecf0f1; /* Jaśniejszy tekst */
+}
+
+/* Styl dla menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.menu-item {
+  background-color: #1abc9c; /* Jasny kolor przycisków */
+  color: white;
+  text-decoration: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Efekty hover */
+.menu-item:hover {
+  background-color: #16a085; /* Ciemniejszy odcień przycisków na hover */
+  transform: translateY(-3px);
+}
+
+.menu-item:active {
+  background-color: #1abc9c; /* Kolor po kliknięciu */
+}
+
+/* Styl dla przycisków logowania i rejestracji */
 .session-container {
   position: absolute;
   top: 20px;
@@ -37,43 +83,11 @@ body {
 
 .session-item:hover {
   background-color: #2980b9;
-}
-
-.main-content {
-  background-color: #34495e; /* Slightly different background color */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.menu {
-  margin-top: 20px;
-}
-
-.menu-item {
-  background-color: #1abc9c; /* Jasny kolor przycisków */
-  color: white;
-  text-decoration: none;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s, transform 0.3s;
-  display: block;
-  margin: 10px auto;
-  width: 80%;
-}
-
-/* Efekty hover */
-.menu-item:hover {
-  background-color: #16a085; /* Ciemniejszy odcień przycisków na hover */
   transform: translateY(-3px);
 }
 
-.menu-item:active {
-  background-color: #1abc9c; /* Kolor po kliknięciu */
+.session-item:active {
+  background-color: #3498db;
 }
 
 /* Media queries - Responsywność na urządzenia mobilne */
@@ -87,12 +101,17 @@ body {
     margin-bottom: 10px;
   }
 
-  .main-content {
+  .container {
     padding: 15px; /* Mniejsze marginesy wewnętrzne na urządzeniach mobilnych */
   }
 
   .menu-item {
     font-size: 1rem; /* Zmniejszenie rozmiaru czcionki przycisków */
     padding: 12px; /* Mniejsze przyciski na małych ekranach */
+  }
+
+  .session-item {
+    font-size: 0.9rem; /* Zmniejszenie rozmiaru czcionki przycisków logowania i rejestracji */
+    padding: 8px 15px; /* Mniejsze przyciski na małych ekranach */
   }
 }

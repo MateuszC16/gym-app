@@ -41,6 +41,7 @@
 
 .form-container h2 {
     text-align: center;
+    color: #fff; /* Light text color */
 }
 
 .form-container form {
@@ -51,14 +52,18 @@
 
 .form-container label {
     margin: 10px 0 5px;
+    color: #fff; /* Light text color */
 }
 
-.form-container input {
+.form-container input,
+.form-container textarea {
     padding: 10px;
     margin-bottom: 10px;
     width: 80%;
     border: 1px solid #ccc;
     border-radius: 5px;
+    background-color: #444; /* Darker input background */
+    color: #fff; /* Light text color */
 }
 
 .form-container button {
