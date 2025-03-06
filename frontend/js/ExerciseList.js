@@ -111,9 +111,6 @@ class ExerciseList {
     const modal = document.createElement('div');
     modal.classList.add('modal');
 
-    const imageOneInfo = exercise.image_one ? `Dodane zdjęcie 1: <a href="${window.SERVER_URL}${exercise.image_one}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 1';
-    const imageTwoInfo = exercise.image_two ? `Dodane zdjęcie 2: <a href="${window.SERVER_URL}${exercise.image_two}" target="_blank">Zobacz</a>` : 'Brak zdjęcia 2';
-
     modal.innerHTML = `
       <div class="modal-content">
         <h2>Edytuj ćwiczenie</h2>
@@ -146,14 +143,6 @@ class ExerciseList {
         <label for="description">Opis ćwiczenia</label>
         <textarea id="description">${exercise.description || ''}</textarea>
         
-        <label for="imageOne">Zdjęcie 1</label>
-        <input type="file" id="imageOne">
-        <p>${imageOneInfo}</p>
-
-        <label for="imageTwo">Zdjęcie 2</label>
-        <input type="file" id="imageTwo">
-        <p>${imageTwoInfo}</p>
-        
         <button id="saveButton">Zapisz</button>
       </div>
     `;
@@ -168,21 +157,6 @@ class ExerciseList {
       updatedExercise.append('currentWeight', document.getElementById('currentWeight').value);
       updatedExercise.append('maxWeight', document.getElementById('maxWeight').value);
       updatedExercise.append('maxWeightDate', document.getElementById('maxWeightDate').value);
-      
-      const imageOne = document.getElementById('imageOne').files[0];
-      const imageTwo = document.getElementById('imageTwo').files[0];
-
-      if (imageOne) {
-        updatedExercise.append('imageOne', imageOne);
-      } else {
-        updatedExercise.append('imageOne', exercise.image_one || '');
-      }
-
-      if (imageTwo) {
-        updatedExercise.append('imageTwo', imageTwo);
-      } else {
-        updatedExercise.append('imageTwo', exercise.image_two || '');
-      }
 
       const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`, {
         method: 'PUT',

@@ -1,4 +1,5 @@
 document.getElementById('exercise-form').addEventListener('submit', async function(event) {
+
   event.preventDefault();  // Zapobiegamy domyślnemu wysyłaniu formularza (przeładowaniu strony)
 
   const name = document.getElementById('name').value;
@@ -13,8 +14,6 @@ document.getElementById('exercise-form').addEventListener('submit', async functi
   // Pobieramy opis ćwiczenia
   const description = document.getElementById('description').value;
 
-  const images = document.getElementById('images').files;  // Pobieramy pliki
-
   // Tworzymy FormData
   const formData = new FormData();
   formData.append('name', name);
@@ -23,13 +22,6 @@ document.getElementById('exercise-form').addEventListener('submit', async functi
   formData.append('maxWeight', maxWeight);  // Możemy wysłać null, jeśli brak
   formData.append('maxWeightDate', validMaxWeightDate);  // Dodajemy datę maksymalnego ciężaru, lub null jeśli pusta
   formData.append('description', description);  // Dodajemy opis ćwiczenia
-
-  // Jeśli zdjęcia zostały dodane, dodajemy je do formData
-  if (images.length > 0) {
-    for (let i = 0; i < images.length; i++) {
-      formData.append('images', images[i]);
-    }
-  }
 
   // Wysyłamy dane do backendu
   try {
