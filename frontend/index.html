@@ -5,17 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Główne menu</title>
   <link rel="stylesheet" href="css/mainForm.css">
+  <link rel="stylesheet" href="css/modal.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Witaj w aplikacji do zarządzania ćwiczeniami!</h1>
-    <div class="menu">
-      <a href="addExercise.html" class="menu-item">Dodaj nowe ćwiczenie</a>
-      <a href="exerciseList.html" class="menu-item">Zobacz listę ćwiczeń</a>
-      <a href="trainingDays.html" class="menu-item">Moje dni treningowe</a>
-      <a href="addTrainingDay.html" class="menu-item">Utwórz nowy dzień treningowy</a>
+  <div class="session-container">
+    <a href="#" class="session-item" id="login-link">Zaloguj się</a>
+    <a href="#" class="session-item" id="register-link">Zarejestruj się</a>
+  </div>
+  <div class="main-content">
+    <div class="container">
+      <h1>Witaj w aplikacji do zarządzania ćwiczeniami!</h1>
+      <div class="menu">
+        <a href="addExercise.html" class="menu-item">Dodaj nowe ćwiczenie</a>
+        <a href="exerciseList.html" class="menu-item">Zobacz listę ćwiczeń</a>
+        <a href="trainingDays.html" class="menu-item">Moje dni treningowe</a>
+        <a href="addTrainingDay.html" class="menu-item">Utwórz nowy dzień treningowy</a>
+      </div>
     </div>
   </div>
 
+  <script src="js/modal.js"></script>
 </body>
 </html>

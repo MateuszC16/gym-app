@@ -14,29 +14,41 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  position: relative;
 }
 
-.container {
-  text-align: center;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  background-color: #34495e; /* Ciemniejsze tło dla kontenera */
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #ecf0f1; /* Jaśniejszy tekst */
-}
-
-/* Styl dla menu */
-.menu {
+.session-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  gap: 10px;
+}
+
+.session-item {
+  background-color: #3498db; /* Kolor przycisków */
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.session-item:hover {
+  background-color: #2980b9;
+}
+
+.main-content {
+  background-color: #34495e; /* Slightly different background color */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.menu {
+  margin-top: 20px;
 }
 
 .menu-item {
@@ -49,6 +61,9 @@ h1 {
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, transform 0.3s;
+  display: block;
+  margin: 10px auto;
+  width: 80%;
 }
 
 /* Efekty hover */
@@ -72,7 +87,7 @@ h1 {
     margin-bottom: 10px;
   }
 
-  .container {
+  .main-content {
     padding: 15px; /* Mniejsze marginesy wewnętrzne na urządzeniach mobilnych */
   }
 
