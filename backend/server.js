@@ -18,10 +18,13 @@ app.use(cors());
 // Umożliwiamy obsługę JSON w ciałach żądań
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Konfiguracja sesji
 app.use(session({
     secret: 'your-secret-key',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { secure: false } // Ustaw na 'true' w przypadku HTTPS
 }));
 
 // Ścieżka do folderu 'uploads' (zdjęcia)
@@ -33,11 +36,11 @@ app.use('/api/training-days', trainingDaysRouter);
 app.use('/api', userSessionRouter);
 
 app.get('/', (req, res) => {
-  console.log('Root endpoint hit');
-  res.send('Serwer działa!');
-})
+    console.log('Root endpoint hit');
+    res.send('Serwer działa!');
+});
 
 // Nasłuchiwanie na porcie 3000
 app.listen(3000, () => {
-  console.log('Serwer działa na porcie 3000');
+    console.log('Serwer działa na porcie 3000');
 });

@@ -135,16 +135,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Funkcja do obsługi wylogowania
+    async function handleLogout() {
+        const response = await fetch(`${window.SERVER_URL}api/logout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (response.ok) {
+            console.log('Wylogowanie udane');
+            location.reload();
+        } else {
+            console.log('Błąd wylogowania');
+            alert('Nie udało się wylogować');
+        }
+    }
+
     // Sprawdzenie sesji użytkownika
     console.log('Sprawdzanie sesji użytkownika');
-    fetch(`${window.SERVER_URL}api/session`)
+    fetch(`${window.SERVER_URL}api/session`, {
+        method: 'GET',
+        credentials: 'same-origin', // Dodaj tę opcję, aby ciasteczka były wysyłane
+    })
         .then(response => response.json())
         .then(data => {
+            console.log('Dane sesji:', data);
             const sessionContainer = document.querySelector('.session-container');
 
             if (data.loggedIn) {
                 console.log('Użytkownik zalogowany');
-                sessionContainer.innerHTML = `Witaj, ${data.username}`;
+                sessionContainer.innerHTML = `
+                    Witaj, ${data.username}
+                    <button id="logout-btn">Wyloguj się</button>
+                `;
+                document.getElementById('logout-btn').addEventListener('click', handleLogout);
             } else {
                 console.log('Użytkownik niezalogowany');
                 sessionContainer.innerHTML = `
