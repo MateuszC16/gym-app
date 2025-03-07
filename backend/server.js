@@ -33,6 +33,7 @@ app.use('/api/training-days', trainingDaysRouter);
 app.use('/api', userSessionRouter);
 
 app.get('/', (req, res) => {
+  console.log('Root endpoint hit');
   res.send('Serwer działa!');
 })
 
