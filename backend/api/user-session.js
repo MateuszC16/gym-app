@@ -15,19 +15,20 @@ const pool = new Pool({
     port: 5432,
 });
 
+// Middleware do uwierzytelniania JWT
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
     if (token) {
         jwt.verify(token, 'your-secret-key', (err, user) => {
             if (err) {
-                return res.sendStatus(403);
+                return res.sendStatus(403); // Niepoprawny token
             }
-            req.user = user;
+            req.user = user; // Dodajemy dane użytkownika do requesta
             next();
         });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(401); // Brak tokenu
     }
 };
 
@@ -39,6 +40,7 @@ router.post('/register', async (req, res) => {
     const password_hash = await bcrypt.hash(password, 10);
 
     try {
+        // Zapisujemy użytkownika w bazie
         await pool.query(
             'INSERT INTO users (first_name, last_name, user_type, gmail, login, password_hash) VALUES ($1, $2, $3, $4, $5, $6)',
             [first_name, last_name, 'normal', gmail, login, password_hash]
@@ -62,6 +64,7 @@ router.post('/login', async (req, res) => {
             const match = await bcrypt.compare(password, user.password_hash);
 
             if (match) {
+                // Generujemy token JWT zawierający dane użytkownika, w tym user_id
                 const token = jwt.sign({ username: user.first_name, userId: user.id }, 'your-secret-key', { expiresIn: '1h' });
                 console.log('Logowanie udane');
                 res.json({ token });
@@ -81,7 +84,7 @@ router.post('/login', async (req, res) => {
 router.get('/session', authenticateJWT, (req, res) => {
     res.json({
         loggedIn: true,
-        username: req.user.username
+        username: req.user.username // Dostęp do użytkownika przez req.user
     });
 });
 

@@ -3,6 +3,7 @@ import multer from 'multer';
 import pkg from 'pg';
 import path from 'path';
 import fs from 'fs';
+import { authenticate } from './auth.js'; // Importujemy middleware
 
 const { Client } = pkg;
 
@@ -12,7 +13,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    const userId = req.body.userId || 'unknown_user';
+    const userId = req.user?.userId || 'unknown_user';  // Pobieramy userId z req.user
     const exerciseName = req.body.name || 'exercise';
     const timestamp = Date.now();
     const fileExtension = path.extname(file.originalname);
@@ -43,10 +44,10 @@ client.connect()
   .catch(err => console.error('Błąd połączenia z bazą:', err));
 
 // Endpoint do dodawania ćwiczenia
-router.post('/', upload.array('images', 2), async (req, res) => {
+router.post('/', authenticate, upload.array('images', 2), async (req, res) => {
   const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate, description } = req.body;
   const images = req.files;
-  const userId = req.user.userId; // Pobierz user_id z tokena JWT
+  const userId = req.user.userId; // Pobierz userId z middleware
 
   console.log('userId:', userId); // Logowanie userId
 
@@ -107,7 +108,7 @@ router.get('/:id', async (req, res) => {
 
 
 // Endpoint do aktualizowania ćwiczenia
-router.put('/:id', upload.array('images', 2), async (req, res) => {
+router.put('/:id', authenticate, upload.array('images', 2), async (req, res) => {
   const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate, description } = req.body;
   const images = req.files;
 
@@ -137,7 +138,7 @@ router.put('/:id', upload.array('images', 2), async (req, res) => {
 });
 
 // Endpoint do usuwania ćwiczenia
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -163,16 +164,6 @@ router.delete('/:id', async (req, res) => {
   } catch (err) {
     console.error('Błąd przy usuwaniu ćwiczenia:', err);
     res.status(500).json({ error: 'Błąd przy usuwaniu ćwiczenia' });
-  }
-});
-
-// Endpoint do pobierania ćwiczeń w celu wybrania ich do dnia treningowego
-router.get('/selectable', async (req, res) => {
-  try {
-    const result = await client.query('SELECT id, name FROM exercises');
-    res.json(result.rows); // Zwróci tylko ID i nazwę ćwiczenia
-  } catch (err) {
-    res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczeń do wyboru' });
   }
 });
 

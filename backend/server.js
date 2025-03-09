@@ -16,7 +16,7 @@ const app = express();
 // Umożliwiamy CORS
 app.use(cors({
     origin: 'http://127.0.0.1:5500', // Adjust the origin to match your frontend URL
-    methods: ['GET', 'POST', 'DELETE' , 'PUT'], // Add 'DELETE' to allowed methods
+    methods: ['GET', 'POST', 'DELETE', 'PUT'], // Add 'DELETE' to allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Add 'Authorization' to allowed headers
     credentials: true, // Ensure credentials like cookies/sessions are supported
 }));
@@ -31,6 +31,7 @@ app.use(session({
     cookie: { secure: false } // Set to true in production (when using HTTPS)
 }));
 
+// Middleware dla weryfikacji JWT
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
@@ -39,20 +40,22 @@ const authenticateJWT = (req, res, next) => {
             if (err) {
                 return res.sendStatus(403);
             }
-            req.user = user;
-            console.log('Authenticated user:', user); // Logowanie user
-            console.log('User after verification:', user); // Logowanie user after verification
+            req.user = user; // Dodajemy dane użytkownika do requesta
+            console.log('Authenticated user:', user); // Logowanie użytkownika
             next();
         });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(401); // Brak tokenu
     }
 };
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Trasy wymagające weryfikacji JWT
 app.use('/api/exercises', authenticateJWT, exercisesRouter);
 app.use('/api/training-days', authenticateJWT, trainingDaysRouter);
+
+// Trasy związane z sesjami użytkownika
 app.use('/api', userSessionRouter);
 
 app.get('/', (req, res) => {
