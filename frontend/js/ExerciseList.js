@@ -7,9 +7,14 @@ class ExerciseList {
   // Funkcja do renderowania ćwiczeń na stronie
   async renderExercises(muscleGroup = '') {
     try {
+      const token = localStorage.getItem('token');
       // Zmiana: Dodanie filtrowania po partii mięśniowej
       const url = muscleGroup ? `${window.SERVER_URL}api/exercises?muscle_group=${muscleGroup}` : window.SERVER_URL+'api/exercises';
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`Błąd odpowiedzi z serwera: ${response.status}`);
@@ -105,7 +110,12 @@ class ExerciseList {
 
   // Funkcja do edytowania ćwiczenia
   async editExercise(id) {
-    const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`);
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     const exercise = await response.json();
 
     const modal = document.createElement('div');
@@ -160,6 +170,9 @@ class ExerciseList {
 
       const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`, {
         method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: updatedExercise
       });
 
@@ -180,9 +193,13 @@ class ExerciseList {
 
   // Funkcja do usuwania ćwiczenia
   async deleteExercise(id) {
+    const token = localStorage.getItem('token');
     if (confirm('Czy na pewno chcesz usunąć to ćwiczenie?')) {
       const response = await fetch(`${window.SERVER_URL}api/exercises/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (response.ok) {

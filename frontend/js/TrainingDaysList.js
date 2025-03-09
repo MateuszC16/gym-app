@@ -1,6 +1,13 @@
 async function fetchTrainingDays() {
   try {
-    const response = await fetch(window.SERVER_URL+'api/training-days');
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${window.SERVER_URL}api/training-days`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -166,9 +173,13 @@ function openEditModal(trainingDay) {
 
     console.log('Sending updated training day data:', updatedTrainingDay); // Logowanie danych przed wysłaniem
 
+    const token = localStorage.getItem('token');
     const response = await fetch(`${window.SERVER_URL}api/training-days/${trainingDay.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify(updatedTrainingDay)
     });
 
@@ -231,8 +242,12 @@ function openEditModal(trainingDay) {
 
 // Funkcja do usuwania dnia treningowego
 async function deleteTrainingDay(trainingDayId) {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${window.SERVER_URL}api/training-days/${trainingDayId}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
   });
 
   if (response.ok) {

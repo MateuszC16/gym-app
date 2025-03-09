@@ -16,14 +16,34 @@
     <div class="container">
       <h1>Witaj w aplikacji do zarządzania ćwiczeniami!</h1>
       <div class="menu">
-        <a href="addExercise.html" class="menu-item">Dodaj nowe ćwiczenie</a>
-        <a href="exerciseList.html" class="menu-item">Zobacz listę ćwiczeń</a>
-        <a href="trainingDays.html" class="menu-item">Moje dni treningowe</a>
-        <a href="addTrainingDay.html" class="menu-item">Utwórz nowy dzień treningowy</a>
+        <a href="#" class="menu-item" id="add-exercise-link">Dodaj nowe ćwiczenie</a>
+        <a href="#" class="menu-item" id="exercise-list-link">Zobacz listę ćwiczeń</a>
+        <a href="#" class="menu-item" id="training-days-link">Moje dni treningowe</a>
+        <a href="#" class="menu-item" id="add-training-day-link">Utwórz nowy dzień treningowy</a>
       </div>
     </div>
   </div>
   <script src="js/config.js"></script>
   <script src="js/User.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const token = localStorage.getItem('token');
+      const menuLinks = document.querySelectorAll('.menu-item');
+
+      if (!token) {
+        menuLinks.forEach(link => {
+          link.addEventListener('click', function (event) {
+            event.preventDefault();
+            alert('Najpierw się zaloguj!');
+          });
+        });
+      } else {
+        document.getElementById('add-exercise-link').href = 'addExercise.html';
+        document.getElementById('exercise-list-link').href = 'exerciseList.html';
+        document.getElementById('training-days-link').href = 'trainingDays.html';
+        document.getElementById('add-training-day-link').href = 'addTrainingDay.html';
+      }
+    });
+  </script>
 </body>
 </html>

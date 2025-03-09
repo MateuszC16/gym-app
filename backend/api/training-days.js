@@ -19,6 +19,9 @@ client.connect()
 // Endpoint do tworzenia dnia treningowego
 router.post('/', async (req, res) => {
   const { date, location, exercises } = req.body;
+  const userId = req.user.userId; // Pobierz user_id z tokena JWT
+
+  console.log('userId:', userId); // Logowanie userId
 
   try {
     // Logowanie danych wejściowych
@@ -26,8 +29,8 @@ router.post('/', async (req, res) => {
 
     // Dodanie dnia treningowego do bazy danych
     const result = await client.query(
-      'INSERT INTO training_days(date, location) VALUES($1, $2) RETURNING id',
-      [date, location]
+      'INSERT INTO training_days(date, location, user_id) VALUES($1, $2, $3) RETURNING id',
+      [date, location, userId]
     );
 
     const trainingDayId = result.rows[0].id;

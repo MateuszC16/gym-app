@@ -16,7 +16,7 @@ const app = express();
 // Umożliwiamy CORS
 app.use(cors({
     origin: 'http://127.0.0.1:5500', // Adjust the origin to match your frontend URL
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'DELETE' , 'PUT'], // Add 'DELETE' to allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Add 'Authorization' to allowed headers
     credentials: true, // Ensure credentials like cookies/sessions are supported
 }));
@@ -40,6 +40,8 @@ const authenticateJWT = (req, res, next) => {
                 return res.sendStatus(403);
             }
             req.user = user;
+            console.log('Authenticated user:', user); // Logowanie user
+            console.log('User after verification:', user); // Logowanie user after verification
             next();
         });
     } else {

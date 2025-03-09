@@ -46,6 +46,9 @@ client.connect()
 router.post('/', upload.array('images', 2), async (req, res) => {
   const { name, muscleGroup, currentWeight, maxWeight, maxWeightDate, description } = req.body;
   const images = req.files;
+  const userId = req.user.userId; // Pobierz user_id z tokena JWT
+
+  console.log('userId:', userId); // Logowanie userId
 
   const parsedMaxWeight = (maxWeight === 'null' || maxWeight === '') ? null : parseFloat(maxWeight);
   const parsedMaxWeightDate = (maxWeightDate === 'null' || maxWeightDate === '') ? null : new Date(maxWeightDate);
@@ -55,8 +58,8 @@ router.post('/', upload.array('images', 2), async (req, res) => {
 
   try {
     const result = await client.query(
-      'INSERT INTO exercises(name, muscle_group, current_weight, max_weight, max_weight_date, image_one, image_two, description) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, description || null]  // Dodanie opisu ćwiczenia
+      'INSERT INTO exercises(name, muscle_group, current_weight, max_weight, max_weight_date, image_one, image_two, description, user_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+      [name, muscleGroup, currentWeight, parsedMaxWeight, parsedMaxWeightDate, imageOnePath, imageTwoPath, description || null, userId]  // Dodanie opisu ćwiczenia i user_id
     );
 
     res.json(result.rows[0]);
@@ -65,7 +68,6 @@ router.post('/', upload.array('images', 2), async (req, res) => {
     res.status(500).json({ error: 'Błąd przy dodawaniu ćwiczenia' });
   }
 });
-
 
 // Endpoint do pobierania ćwiczeń (z filtrowaniem po partii mięśniowej)
 router.get('/', async (req, res) => {

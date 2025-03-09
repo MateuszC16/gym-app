@@ -1,5 +1,4 @@
 document.getElementById('exercise-form').addEventListener('submit', async function(event) {
-
   event.preventDefault();  // Zapobiegamy domyślnemu wysyłaniu formularza (przeładowaniu strony)
 
   const name = document.getElementById('name').value;
@@ -25,8 +24,12 @@ document.getElementById('exercise-form').addEventListener('submit', async functi
 
   // Wysyłamy dane do backendu
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(window.SERVER_URL+'api/exercises', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
       body: formData
     });
 

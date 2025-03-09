@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.loggedIn) {
                 console.log('Użytkownik zalogowany');
                 sessionContainer.innerHTML = `
-                    Witaj, ${data.username}
+                    <span class="welcome-message">Witaj, ${data.username}</span>
                     <button id="logout-btn">Wyloguj się</button>
                 `;
                 document.getElementById('logout-btn').addEventListener('click', handleLogout);
