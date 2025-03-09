@@ -97,12 +97,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ login, password }),
+                redentials: 'same-origin',
             });
 
             if (response.ok) {
                 console.log('Logowanie udane');
+                // Zapisz dane sesji w lokalnym stanie
+                localStorage.setItem('user', JSON.stringify({ loggedIn: true, username: data.username }));
                 location.reload();
-            } else {
+            }
+             else {
                 console.log('Błąd logowania');
                 alert('Niepoprawny login lub hasło');
             }
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ first_name, last_name, gmail, login, password }),
+                redentials: 'same-origin',
             });
 
             if (response.ok) {
@@ -140,6 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const response = await fetch(`${window.SERVER_URL}api/logout`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            redentials: 'same-origin',
         });
 
         if (response.ok) {

@@ -13,24 +13,25 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Umożliwiamy CORS
-app.use(cors());
+app.use(cors({
+    origin: 'http://127.0.0.1:5500', // Adjust the origin to match your frontend URL
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true, // Ensure credentials like cookies/sessions are supported
+}));
 
-// Umożliwiamy obsługę JSON w ciałach żądań
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Konfiguracja sesji
 app.use(session({
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Ustaw na 'true' w przypadku HTTPS
+    cookie: { secure: false } // Set to true in production (when using HTTPS)
 }));
 
-// Ścieżka do folderu 'uploads' (zdjęcia)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Użycie routerów
 app.use('/api/exercises', exercisesRouter);
 app.use('/api/training-days', trainingDaysRouter);
 app.use('/api', userSessionRouter);
@@ -40,7 +41,6 @@ app.get('/', (req, res) => {
     res.send('Serwer działa!');
 });
 
-// Nasłuchiwanie na porcie 3000
 app.listen(3000, () => {
     console.log('Serwer działa na porcie 3000');
 });
