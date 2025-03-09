@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import pkg from 'pg';
+import jwt from 'jsonwebtoken';
 
 const { Pool } = pkg;
 const router = express.Router();
@@ -13,6 +14,22 @@ const pool = new Pool({
     password: 'admin',
     port: 5432,
 });
+
+const authenticateJWT = (req, res, next) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+
+    if (token) {
+        jwt.verify(token, 'your-secret-key', (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+            req.user = user;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+};
 
 // Rejestracja użytkownika
 router.post('/register', async (req, res) => {
@@ -45,13 +62,9 @@ router.post('/login', async (req, res) => {
             const match = await bcrypt.compare(password, user.password_hash);
 
             if (match) {
-                // Ustawianie sesji
-                req.session.loggedIn = true;
-                req.session.username = user.first_name;
-                req.session.userId = user.id;
-
+                const token = jwt.sign({ username: user.first_name, userId: user.id }, 'your-secret-key', { expiresIn: '1h' });
                 console.log('Logowanie udane');
-                res.status(200).send('Zalogowano pomyślnie');
+                res.json({ token });
             } else {
                 res.status(401).send('Niepoprawny login lub hasło');
             }
@@ -65,18 +78,11 @@ router.post('/login', async (req, res) => {
 });
 
 // Sprawdzanie statusu sesji
-router.get('/session', (req, res) => {
-    if (req.session.loggedIn) {
-        res.json({
-            loggedIn: true,
-            username: req.session.username
-        });
-    } else {
-        res.json({
-            loggedIn: false,
-            username: ''
-        });
-    }
+router.get('/session', authenticateJWT, (req, res) => {
+    res.json({
+        loggedIn: true,
+        username: req.user.username
+    });
 });
 
 // Wylogowanie użytkownika

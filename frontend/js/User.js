@@ -97,16 +97,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ login, password }),
-                redentials: 'same-origin',
             });
 
             if (response.ok) {
+                const data = await response.json();
                 console.log('Logowanie udane');
-                // Zapisz dane sesji w lokalnym stanie
-                localStorage.setItem('user', JSON.stringify({ loggedIn: true, username: data.username }));
+                localStorage.setItem('token', data.token);
                 location.reload();
-            }
-             else {
+            } else {
                 console.log('Błąd logowania');
                 alert('Niepoprawny login lub hasło');
             }
@@ -142,28 +140,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Funkcja do obsługi wylogowania
     async function handleLogout() {
-        const response = await fetch(`${window.SERVER_URL}api/logout`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            redentials: 'same-origin',
-        });
-
-        if (response.ok) {
-            console.log('Wylogowanie udane');
-            location.reload();
-        } else {
-            console.log('Błąd wylogowania');
-            alert('Nie udało się wylogować');
-        }
+        localStorage.removeItem('token');
+        location.reload();
     }
 
     // Sprawdzenie sesji użytkownika
     console.log('Sprawdzanie sesji użytkownika');
+    const token = localStorage.getItem('token');
+    if (!token) {
+        setupEventListeners();
+        return;
+    }
+
     fetch(`${window.SERVER_URL}api/session`, {
         method: 'GET',
-        credentials: 'same-origin', // Dodaj tę opcję, aby ciasteczka były wysyłane
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                }
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Dane sesji:', data);
             const sessionContainer = document.querySelector('.session-container');
@@ -184,5 +187,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 setupEventListeners(); // Ustawienie event listenerów po dodaniu linków
             }
         })
-        .catch(error => console.error('Błąd pobierania sesji:', error));
+        .catch(error => {
+            console.error('Błąd pobierania sesji:', error);
+            if (error.message === 'Forbidden') {
+                localStorage.removeItem('token');
+                location.reload();
+            }
+        });
 });
