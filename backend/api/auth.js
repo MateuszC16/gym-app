@@ -10,6 +10,7 @@ export const authenticate = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, 'your-secret-key');  // Użyj odpowiedniego klucza
     req.user = { userId: decoded.userId };  // Zakładam, że 'userId' jest zapisane w payload
+    console.log(decoded)
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Błąd autoryzacji' });
