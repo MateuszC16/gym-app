@@ -78,6 +78,8 @@ router.post('/login', async (req, res) => {
         console.error('Błąd logowania:', err);
         res.status(500).send('Błąd logowania');
     }
+
+    
 });
 
 // Sprawdzanie statusu sesji
