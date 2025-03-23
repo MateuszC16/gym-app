@@ -17,7 +17,7 @@ const app = express();
 app.use(cors({
     origin: 'http://127.0.0.1:5500', // Adjust the origin to match your frontend URL
     methods: ['GET', 'POST', 'DELETE', 'PUT'], // Add 'DELETE' to allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Add 'Authorization' to allowed headers
+    allowedHeaders: ['Content-Type', 'Authorization', 'User-ID'], // Add 'User-ID' to allowed headers
     credentials: true, // Ensure credentials like cookies/sessions are supported
 }));
 

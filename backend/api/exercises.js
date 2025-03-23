@@ -71,16 +71,17 @@ router.post('/', authenticate, upload.array('images', 2), async (req, res) => {
 });
 
 // Endpoint do pobierania ćwiczeń (z filtrowaniem po partii mięśniowej)
-router.get('/', async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
   const muscleGroup = req.query.muscle_group;  // Pobieramy parametr z zapytania
+  const userId = req.user.userId; // Pobierz userId z middleware
 
   try {
-    let query = 'SELECT * FROM exercises';
-    const queryParams = [];
+    let query = 'SELECT * FROM exercises WHERE user_id = $1';
+    const queryParams = [userId];
 
     // Jeśli określono grupę mięśniową, dodajemy warunek do zapytania
     if (muscleGroup) {
-      query += ' WHERE muscle_group = $1';
+      query += ' AND muscle_group = $2';
       queryParams.push(muscleGroup);
     }
 
@@ -90,7 +91,6 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczeń z bazy danych' });
   }
 });
-
 
 // Endpoint do pobierania ćwiczenia po ID
 router.get('/:id', async (req, res) => {
@@ -105,7 +105,6 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Błąd przy pobieraniu ćwiczenia' });
   }
 });
-
 
 // Endpoint do aktualizowania ćwiczenia
 router.put('/:id', authenticate, upload.array('images', 2), async (req, res) => {

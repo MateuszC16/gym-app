@@ -1,5 +1,6 @@
 import express from 'express';
 import pkg from 'pg';
+import { authenticate } from './auth.js'; // Import the authenticate middleware
 
 const { Client } = pkg;
 const router = express.Router();
@@ -17,7 +18,7 @@ client.connect()
   .catch(err => console.error('Błąd połączenia z bazą:', err));
 
 // Endpoint do tworzenia dnia treningowego
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
   const { date, location, exercises } = req.body;
   const userId = req.user.userId; // Pobierz user_id z tokena JWT
 
@@ -76,7 +77,9 @@ router.post('/', async (req, res) => {
 });
 
 // Endpoint do pobierania wszystkich dni treningowych wraz z ćwiczeniami
-router.get('/', async (req, res) => {
+router.get('/', authenticate, async (req, res) => {
+  const userId = req.user.userId; // Pobierz userId z middleware
+
   try {
     const query = `
       SELECT 
@@ -99,11 +102,13 @@ router.get('/', async (req, res) => {
         training_day_exercises tde ON td.id = tde.training_day_id
       LEFT JOIN 
         exercises e ON e.id = tde.exercise_id
+      WHERE 
+        td.user_id = $1
       ORDER BY 
         td.date;
     `;
     
-    const result = await client.query(query);
+    const result = await client.query(query, [userId]);
     const trainingDays = [];
 
     result.rows.forEach(row => {
@@ -150,7 +155,7 @@ router.get('/', async (req, res) => {
 });
 
 // Endpoint do edytowania dnia treningowego
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
   const { date, location, exercises } = req.body;
 
@@ -216,7 +221,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Endpoint do usuwania dnia treningowego
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -234,7 +239,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Endpoint do dodawania ćwiczenia do dnia treningowego
-router.post('/:id/exercises', async (req, res) => {
+router.post('/:id/exercises', authenticate, async (req, res) => {
   const { id } = req.params;
   const { exercise_id, weight, description } = req.body;
 
