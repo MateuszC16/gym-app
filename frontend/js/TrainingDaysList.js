@@ -83,6 +83,7 @@ async function fetchTrainingDays() {
     });
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
+    alert('Nie udało się pobrać dni treningowych. Sprawdź połączenie z serwerem.');
   }
 }
 
@@ -115,8 +116,18 @@ function openEditModal(trainingDay) {
   modal.style.display = 'flex'; // Zmiana z 'block' na 'flex' dla wyśrodkowania
 
   // Pobierz wszystkie ćwiczenia z bazy danych i wypełnij select
-  fetch(window.SERVER_URL+'api/exercises')
-    .then(response => response.json())
+  const token = localStorage.getItem('token');
+  fetch(`${window.SERVER_URL}api/exercises`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Unauthorized');
+      }
+      return response.json();
+    })
     .then(exercises => {
       exercisesSelect.innerHTML = '<option value="">Wybierz ćwiczenie</option>';
       exercises.forEach(exercise => {
@@ -154,6 +165,10 @@ function openEditModal(trainingDay) {
             exercisesSelect.appendChild(option);
           });
       });
+    })
+    .catch(error => {
+      console.error('Error fetching exercises:', error);
+      alert('Nie udało się pobrać ćwiczeń. Sprawdź połączenie z serwerem.');
     });
 
   // Obsługa zapisu zmian
@@ -174,21 +189,25 @@ function openEditModal(trainingDay) {
     console.log('Sending updated training day data:', updatedTrainingDay); // Logowanie danych przed wysłaniem
 
     const token = localStorage.getItem('token');
-    const response = await fetch(`${window.SERVER_URL}api/training-days/${trainingDay.id}`, {
-      method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(updatedTrainingDay)
-    });
+   if (window.SERVER_URL && trainingDay.id) {
+  const response = await fetch(`${window.SERVER_URL}api/training-days/${trainingDay.id}`, {
+    method: 'PUT', // lub inny odpowiedni metodę (np. 'DELETE' lub 'GET')
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Pamiętaj, żeby token był poprawny
+    },
+    body: JSON.stringify(updatedTrainingDay) // Zastąp tym odpowiednimi danymi do wysłania
+  });
 
-    if (response.ok) {
-      alert('Dzień treningowy zaktualizowany');
-      location.reload(); // Odśwież stronę, by zobaczyć zmiany
-    } else {
-      alert('Błąd przy edytowaniu dnia treningowego');
-    }
+  if (response.ok) {
+    alert('Dzień treningowy zaktualizowany');
+  } else {
+    alert('Błąd przy edytowaniu dnia treningowego');
+  }
+} else {
+  console.error('Błąd: Brak SERVER_URL lub ID dnia treningowego');
+}
+
   });
 
   // Anulowanie edycji
@@ -220,7 +239,17 @@ function openEditModal(trainingDay) {
         return; // Nie dodawaj ponownie
       }
 
-      const response = await fetch(`${window.SERVER_URL}api/exercises/${selectedExerciseId}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${window.SERVER_URL}api/exercises/${selectedExerciseId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Unauthorized');
+      }
+
       const exercise = await response.json();
       trainingDay.exercises.push({
         id: exercise.id,
