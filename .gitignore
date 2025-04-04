@@ -59,6 +59,10 @@ yarn-error.log*
 
 
 # Dependency directories
+backend/node_modules/
+backend/jspm_packages/
+frontend/node_modules/
+frontend/jspm_packages/
 node_modules/
 jspm_packages/
 
